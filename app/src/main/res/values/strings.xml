@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AppLocker</string>
+
+    <string name="password_panel_remind_to_lock_tip">身份确认</string>
+</resources>
