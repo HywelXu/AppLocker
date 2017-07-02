@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">AppLocker</string>
-
+    <!-- ================设置手势密码================ -->
+    <string name="string_gustlockset_title">设置手势密码</string>
+    <string name="string_guestset_typefirst">绘制手势图案</string>
+    <string name="string_guestset_typesecond">再次绘制手势图案</string>
+    <string name="string_guestset_notsame">与上次不一致，请重新绘制</string>
+    <string name="string_guestset_short">至少连接4个点，请重新输入</string>
     <string name="password_panel_remind_to_lock_tip">身份确认</string>
 </resources>

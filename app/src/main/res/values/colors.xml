@@ -6,7 +6,42 @@
 
     <color name="colorBlue">#00aadd</color>
     <color name="colorWhite">#f8f8f8</color>
+    <color name="colorGray">#cccccc</color>
     <color name="colorGreen">#35ab7d</color>
-    <color name="colorGreen2">#2DAC7C</color>
+    <color name="colorGreen2">#28bd7c</color>
 
+    <!-- App主题颜色 -->
+    <color name="themecolor">#77BF00</color>
+    <color name="themecolor2">#DE7927</color>
+    <color name="themecolor3">#FB5180</color>
+    <!-- App主题背景颜色 -->
+    <color name="themeback">#EBEBEB</color>
+    <color name="huise">#787878</color>
+    <color name="baise">#ffffff</color>
+    <color name="hongse">#ff0000</color>
+    <color name="heise">#000000</color>
+    <color name="lvse">#006000</color>
+    <color name="huangse">#f9f900</color>
+    <color name="zise">#7e3d76</color>
+    <color name="lanse">#007aff</color>
+    <!--  <color name="lanse">#85D0E7</color>-->
+    <color name="zongse">#642100</color>
+    <color name="chengse">#FF8000</color>
+    <color name="danlanse">#56b9ff</color>
+    <!--<color name="danlanse">#85D0E7</color>-->
+    <color name="danzise">#ca8ec2</color>
+    <color name="danhuangse">#ffff6f</color>
+    <color name="danhongse">#ff7575</color>
+    <color name="danlvse">#79ff79</color>
+    <color name="jinhuangse">#f9f900</color>
+    <color name="lanzise">#6f00d2</color>
+    <color name="fenhongse">#ff60af</color>
+    <color name="lanlvse">#02f78e</color>
+    <color name="zihongse">#750075</color>
+    <color name="qianhuise">#BBBBBB</color>
+    <color name="jiuhongse">#BB2332</color>
+    <color name="cacheColorHint">#00000000</color>
+    <color name="charline_hongse">#de0b08</color>
+    <color name="charline_chengse">#e4a51e</color>
+    <color name="charline_lvse">#64bb07</color>
 </resources>

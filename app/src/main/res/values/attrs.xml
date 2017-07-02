@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 自定义手势密码属性 -->
+    <declare-styleable name="GestureLock">
+        <!-- 手势密码圆圈正常图片 -->
+        <attr name="drawablenormal" format="reference" />
+        <!-- 手势密码圆圈选中图片 -->
+        <attr name="drawableselected" format="reference" />
+        <!-- 手势密码圆圈错误图片 -->
+        <attr name="drawableeerror" format="reference" />
+        <!-- 手势轨迹线条正常颜色 -->
+        <attr name="linecolornormal" format="color" />
+        <!-- 手势轨迹线条错误颜色 -->
+        <attr name="linecolorerror" format="color" />
+        <!-- 手势轨迹线条宽度 -->
+        <attr name="linewidth" format="dimension" />
+    </declare-styleable>
+</resources>
