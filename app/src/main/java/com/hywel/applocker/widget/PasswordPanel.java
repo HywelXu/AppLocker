@@ -16,7 +16,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.hywel.applocker.R;
-import com.hywel.applocker.model.LockInfo;
+import com.hywel.applocker.model.GestureLockInfo;
+import com.hywel.applocker.widget.GestureLockView.GestureLockCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class PasswordPanel extends ViewGroup {
      * 布局高度
      */
     private int layheight;
-    List<LockInfo> arrayGuestInfo;
+    List<GestureLockInfo> arrayGuestInfo;
     private Drawable drawableNormal;
     private Drawable drawableSelected;
     /**
@@ -58,7 +59,7 @@ public class PasswordPanel extends ViewGroup {
     /**
      * 以选中点集合
      */
-    private ArrayList<LockInfo> arrayChoosed;
+    private ArrayList<GestureLockInfo> arrayChoosed;
     /**
      * 当前手指触摸位置的X坐标
      */
@@ -86,7 +87,7 @@ public class PasswordPanel extends ViewGroup {
     /**
      * 手势密码回调接口
      */
-    private LockCallback xCallback;
+    private GestureLockCallback xCallback;
     private Drawable drawableError;
     /**
      * 正常手势轨迹线条颜色
@@ -138,7 +139,7 @@ public class PasswordPanel extends ViewGroup {
             mView.layout((int) left, (int) top, (int) (left + w),
                     (int) (top + h));
 
-            LockInfo info = new LockInfo();
+            GestureLockInfo info = new GestureLockInfo();
             info.setLeftX(left);
             info.setRightX(left + w);
             info.setTopY(top);
@@ -147,7 +148,7 @@ public class PasswordPanel extends ViewGroup {
             info.setCenterY(centerY);
             info.setPosition(i);
             info.setImageView(mView);
-            info.setState(LockInfo.IMAGE_NORMAL);
+            info.setState(GestureLockInfo.IMAGE_NORMAL);
             arrayGuestInfo.add(info);
         }
     }
@@ -196,8 +197,8 @@ public class PasswordPanel extends ViewGroup {
      * @param pressY
      * @return 得到的封装点击信息的对象
      */
-    private LockInfo getGuestLockMethod(float pressX, float pressY) {
-        for (LockInfo info : arrayGuestInfo) {
+    private GestureLockInfo getGuestLockMethod(float pressX, float pressY) {
+        for (GestureLockInfo info : arrayGuestInfo) {
             if (!(info.getLeftX() <= pressX && pressX <= info.getRightX())) {
                 continue;
             }
@@ -259,7 +260,7 @@ public class PasswordPanel extends ViewGroup {
 
         if (isVerify && isError) {// 绘制错误提示轨迹
             drawaLineMethod(canvas, null, true);
-            for (LockInfo info : arrayChoosed) {
+            for (GestureLockInfo info : arrayChoosed) {
                 info.getImageView().setImageDrawable(drawableError);
             }
             isallowDrawLine = false;
@@ -270,25 +271,25 @@ public class PasswordPanel extends ViewGroup {
                     if (arrayChoosed.size() > 0) {
                         if (xCallback != null) {
                             xCallback
-                                    .onLockCallback(LockCallback.POINT_LENGTH_SHORT);
+                                    .onLockCallback(GestureLockCallback.POINT_LENGTH_SHORT);
                         }
                     }
                     clearMethod();
                 } else {
                     if (!isVerify) {
                         haschoosed = new StringBuilder();
-                        for (LockInfo xinfo : arrayChoosed) {
+                        for (GestureLockInfo xinfo : arrayChoosed) {
                             haschoosed.append(xinfo.getPosition());
                             isVerify = true;
                         }
                         clearMethod();
                         if (xCallback != null) {
                             xCallback
-                                    .onLockCallback(LockCallback.FIRST_LINE_OVER);
+                                    .onLockCallback(GestureLockCallback.FIRST_LINE_OVER);
                         }
                     } else {
                         StringBuilder verifychoosed = new StringBuilder();
-                        for (LockInfo xinfo : arrayChoosed) {
+                        for (GestureLockInfo xinfo : arrayChoosed) {
                             verifychoosed.append(xinfo.getPosition());
                         }
                         if (haschoosed.toString().equals(
@@ -296,12 +297,12 @@ public class PasswordPanel extends ViewGroup {
                             if (xCallback != null) {
                                 clearMethod();
                                 xCallback
-                                        .onLockCallback(LockCallback.TWICE_LINE_SAME);
+                                        .onLockCallback(GestureLockCallback.TWICE_LINE_SAME);
                             }
                         } else {
                             if (xCallback != null) {
                                 xCallback
-                                        .onLockCallback(LockCallback.TWICE_NOT_SAME);
+                                        .onLockCallback(GestureLockCallback.TWICE_NOT_SAME);
                                 isError = true;
                                 postInvalidate();
                             }
@@ -321,8 +322,8 @@ public class PasswordPanel extends ViewGroup {
      * @param canvas 画布
      * @param nowpts 手指当前按下位置的坐标
      */
-    private void drawaLineMethod(Canvas canvas, float[] nowpts, boolean iserror) {
-        if (iserror) {
+    private void drawaLineMethod(Canvas canvas, float[] nowpts, boolean isError) {
+        if (isError) {
             linePaint.setColor(lineCorlorError);
         } else {
             linePaint.setColor(lineCorlorNormal);
@@ -406,10 +407,10 @@ public class PasswordPanel extends ViewGroup {
     private void handleActionMove(MotionEvent event) {
         nowX = event.getX();
         nowY = event.getY();
-        LockInfo info = getGuestLockMethod(nowX, nowY);
+        GestureLockInfo info = getGuestLockMethod(nowX, nowY);
         if (info != null && !isPointChooseMethod(info)) {
             if (arrayChoosed.size() > 0) {
-                LockInfo info3 = getBetweenPoint(
+                GestureLockInfo info3 = getBetweenPoint(
                         arrayChoosed.get(arrayChoosed.size() - 1),
                         info);
                 if (info3 != null && !isPointChooseMethod(info3)) {// 判断中间点并选中
@@ -431,7 +432,7 @@ public class PasswordPanel extends ViewGroup {
         nowX = event.getX();
         nowY = event.getY();
 
-        LockInfo info = getGuestLockMethod(x, y);
+        GestureLockInfo info = getGuestLockMethod(x, y);
         if (info != null) {
             info.getImageView().setImageDrawable(getResources().getDrawable(R.drawable.selected_dot));
             arrayChoosed.add(info);
@@ -445,8 +446,8 @@ public class PasswordPanel extends ViewGroup {
      * @param getinfo 手势图标点集对象
      * @return 已经选择过 true 没有选择过 false
      */
-    private boolean isPointChooseMethod(LockInfo getinfo) {
-        for (LockInfo info : arrayChoosed) {
+    private boolean isPointChooseMethod(GestureLockInfo getinfo) {
+        for (GestureLockInfo info : arrayChoosed) {
             if (info.getCenterX() == getinfo.getCenterX()
                     && info.getCenterY() == getinfo.getCenterY()) {
                 return true;
@@ -462,9 +463,9 @@ public class PasswordPanel extends ViewGroup {
      * @param endpoint   结束点
      * @return 得到的中间点
      */
-    private LockInfo getBetweenPoint(LockInfo startpoint,
-                                     LockInfo endpoint) {
-        LockInfo point = null;
+    private GestureLockInfo getBetweenPoint(GestureLockInfo startpoint,
+                                            GestureLockInfo endpoint) {
+        GestureLockInfo point = null;
         int betweennum = -1;
         switch (startpoint.getPosition()) {
             case 0:
@@ -576,7 +577,7 @@ public class PasswordPanel extends ViewGroup {
                 break;
         }
         if (betweennum != -1) {
-            for (LockInfo info : arrayGuestInfo) {
+            for (GestureLockInfo info : arrayGuestInfo) {
                 if (info.getPosition() == betweennum) {
                     point = info;
                     break;
@@ -592,7 +593,7 @@ public class PasswordPanel extends ViewGroup {
     public void clearMethod() {
         isError = false;
         arrayChoosed.clear();
-        for (LockInfo info : arrayGuestInfo) {
+        for (GestureLockInfo info : arrayGuestInfo) {
             info.getImageView().setImageDrawable(drawableNormal);
         }
     }
@@ -628,14 +629,14 @@ public class PasswordPanel extends ViewGroup {
     /**
      * 获取手势密码回调接口
      */
-    public LockCallback getxCallback() {
+    public GestureLockCallback getxCallback() {
         return xCallback;
     }
 
     /**
      * 设置手势密码回调接口
      */
-    public void setxCallback(LockCallback xCallback) {
+    public void setxCallback(GestureLockCallback xCallback) {
         this.xCallback = xCallback;
     }
 

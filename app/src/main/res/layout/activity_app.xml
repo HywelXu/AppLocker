@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.hywel.applocker.activity.AppActivity">
+
+    <include
+        layout="@layout/password_panel_header"
+        android:visibility="visible" />
+
+    <SearchView
+        android:id="@+id/app_search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="搜索应用"
+        android:visibility="gone">
+
+    </SearchView>
+
+    <TextView
+        android:id="@+id/edit_search"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/bg_frame_search"
+        android:drawableLeft="@mipmap/ic_search"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:hint="搜索应用"
+        android:onClick="handleSearch"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColorHint="#9F9F9F"
+        android:textSize="14sp" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/colorWhite"
+        app:tabIndicatorColor="@color/colorGray"
+        app:tabMode="fixed" />
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_apps"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v4.view.ViewPager>
+</LinearLayout>

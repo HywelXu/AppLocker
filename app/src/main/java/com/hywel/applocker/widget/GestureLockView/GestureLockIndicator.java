@@ -1,4 +1,4 @@
-package com.hywel.applocker.widget;
+package com.hywel.applocker.widget.GestureLockView;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -15,7 +15,7 @@ import com.hywel.applocker.R;
 /**
  * 手势密码图案提示
  */
-public class LockIndicator extends ViewGroup {
+public class GestureLockIndicator extends ViewGroup {
     /**
      * 上下文
      */
@@ -37,16 +37,16 @@ public class LockIndicator extends ViewGroup {
      */
     private int layheight;
 
-    public LockIndicator(Context context) {
+    public GestureLockIndicator(Context context) {
         this(context, null);
     }
 
-    public LockIndicator(Context context, AttributeSet attrs) {
+    public GestureLockIndicator(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public LockIndicator(Context context, AttributeSet attrs,
-                         int defStyleAttr) {
+    public GestureLockIndicator(Context context, AttributeSet attrs,
+                                int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.mContext = context;
         setWillNotDraw(false);

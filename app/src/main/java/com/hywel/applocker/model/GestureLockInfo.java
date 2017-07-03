@@ -7,7 +7,7 @@ import android.widget.ImageView;
 /**
  * 封装手势图标点集对象
  */
-public class LockInfo implements Parcelable {
+public class GestureLockInfo implements Parcelable {
     /**
      * 正常状态
      */
@@ -54,7 +54,7 @@ public class LockInfo implements Parcelable {
     private int state;
     private ImageView imageView;
 
-    public LockInfo() {
+    public GestureLockInfo() {
 
     }
 
@@ -205,20 +205,20 @@ public class LockInfo implements Parcelable {
     }
 
     // 实例化静态内部对象CREATOR实现接口Parcelable.Creator
-    public static final Parcelable.Creator<LockInfo> CREATOR = new Creator<LockInfo>() {
+    public static final Parcelable.Creator<GestureLockInfo> CREATOR = new Creator<GestureLockInfo>() {
         @Override
-        public LockInfo[] newArray(int size) {
-            return new LockInfo[size];
+        public GestureLockInfo[] newArray(int size) {
+            return new GestureLockInfo[size];
         }
 
         // 将Parcel对象反序列化为ParcelableDate
         @Override
-        public LockInfo createFromParcel(Parcel in) {
-            return new LockInfo(in);
+        public GestureLockInfo createFromParcel(Parcel in) {
+            return new GestureLockInfo(in);
         }
     };
 
-    public LockInfo(Parcel in) {
+    public GestureLockInfo(Parcel in) {
         leftX = in.readFloat();
         rightX = in.readFloat();
         topY = in.readFloat();
@@ -227,7 +227,7 @@ public class LockInfo implements Parcelable {
         centerY = in.readFloat();
         position = in.readInt();
         state = in.readInt();
-        imageView = (ImageView) in.readValue(LockInfo.class
+        imageView = (ImageView) in.readValue(GestureLockInfo.class
                 .getClassLoader());
     }
 }

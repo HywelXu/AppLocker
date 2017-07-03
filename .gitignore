@@ -56,7 +56,6 @@ freeline.py
 freeline/
 freeline_project_description.json
 =======
-*.iml
 .gradle
 /local.properties
 /.idea/workspace.xml
@@ -64,5 +63,5 @@ freeline_project_description.json
 .DS_Store
 /build
 /captures
-.externalNativeBuild
 >>>>>>> 8039b07... first commit
+.idea/vcs.xml

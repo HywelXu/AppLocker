@@ -1,19 +1,21 @@
 package com.hywel.applocker.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hywel.applocker.R;
+import com.hywel.applocker.widget.GestureLockView.GestureLockCallback;
+import com.hywel.applocker.widget.GestureLockView.GestureLockIndicator;
 import com.hywel.applocker.widget.PasswordPanel;
-import com.hywel.applocker.widget.LockCallback;
-import com.hywel.applocker.widget.LockIndicator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements LockCallback {
+public class MainActivity extends AppCompatActivity implements GestureLockCallback {
     /**
      * 文字提示
      */
@@ -26,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements LockCallback {
      * 手势密码轨迹图案提示控件
      */
     @BindView(R.id.activity_gustlockset_indicator)
-    LockIndicator guestIndictor;
+    GestureLockIndicator guestIndictor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,23 +52,30 @@ public class MainActivity extends AppCompatActivity implements LockCallback {
     @Override
     public void onLockCallback(int type) {
         switch (type) {
-            case LockCallback.POINT_LENGTH_SHORT:
+            case GestureLockCallback.POINT_LENGTH_SHORT:
                 message.setText(getString(R.string.string_guestset_short));
                 message.setTextColor(getResources().getColor(R.color.themecolor3));
 //                startAnimationMethod();// 调用执行动画的方法
                 break;
-            case LockCallback.TWICE_NOT_SAME:
+            case GestureLockCallback.TWICE_NOT_SAME:
                 message.setText(getString(R.string.string_guestset_notsame));
                 message.setTextColor(getResources().getColor(R.color.themecolor3));
 //                startAnimationMethod();// 调用执行动画的方法
                 break;
-            case LockCallback.TWICE_LINE_SAME:
+            case GestureLockCallback.TWICE_LINE_SAME:
                 message.setTextColor(getResources().getColor(R.color.colorWhite));
                 message.animate().rotationY(360).setDuration(500).start();
                 message.setText("设置成功");
                 Toast.makeText(this, "设置成功", Toast.LENGTH_LONG).show();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(MainActivity.this, AppActivity.class));
+                    }
+                }, 500);
                 break;
-            case LockCallback.FIRST_LINE_OVER:
+            case GestureLockCallback.FIRST_LINE_OVER:
                 guestIndictor.setSelectedMethod(passwordPanel.getHaschoosed()
                         .toString());
                 message.setText(getString(R.string.string_guestset_typesecond));

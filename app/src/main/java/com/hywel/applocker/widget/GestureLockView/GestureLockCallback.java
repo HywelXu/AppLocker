@@ -1,9 +1,9 @@
-package com.hywel.applocker.widget;
+package com.hywel.applocker.widget.GestureLockView;
 
 /**
  * 自定义手势密码锁回调接口
  */
-public interface LockCallback {
+public interface GestureLockCallback {
     /**
      * 选取手势密码点长度不足
      */

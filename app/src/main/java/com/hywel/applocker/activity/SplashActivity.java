@@ -55,6 +55,7 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         startActivity(new Intent(SplashActivity.this, MainActivity.class));
+//                        startActivity(new Intent(SplashActivity.this, AppActivity.class));
                         overridePendingTransition(R.anim.drop_in, R.anim.drop_out);
                         finish();
                     }
@@ -72,4 +73,5 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
     }
+
 }

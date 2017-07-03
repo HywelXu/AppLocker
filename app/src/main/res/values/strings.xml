@@ -7,4 +7,5 @@
     <string name="string_guestset_notsame">与上次不一致，请重新绘制</string>
     <string name="string_guestset_short">至少连接4个点，请重新输入</string>
     <string name="password_panel_remind_to_lock_tip">身份确认</string>
+    <string name="password_panel_all_apps_to_lock_tip">加密应用</string>
 </resources>
