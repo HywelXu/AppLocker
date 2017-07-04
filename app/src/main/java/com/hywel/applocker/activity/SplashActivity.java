@@ -35,11 +35,14 @@ public class SplashActivity extends AppCompatActivity {
 
     private void startSplashAnim() {
         ObjectAnimator iconAnimator = ObjectAnimator.ofFloat(mSplashImageView, "rotationY", 0f, 180f);
+        iconAnimator.setDuration(1000);
         ObjectAnimator nameTvAnimator = ObjectAnimator.ofFloat(mAppNameTV, "alpha", 0f, 1f);
+        nameTvAnimator.setDuration(1300);
         ObjectAnimator desTvAnimator = ObjectAnimator.ofFloat(mAppDesTV, "alpha", 0f, 1f);
+        desTvAnimator.setDuration(1300);
 
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.setDuration(1000);
+//        animatorSet.setDuration(1000);
         animatorSet.setInterpolator(new AccelerateInterpolator());
         animatorSet.play(iconAnimator).with(nameTvAnimator).with(desTvAnimator);
         animatorSet.start();

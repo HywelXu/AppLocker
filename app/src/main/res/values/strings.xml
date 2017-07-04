@@ -8,4 +8,7 @@
     <string name="string_guestset_short">至少连接4个点，请重新输入</string>
     <string name="password_panel_remind_to_lock_tip">身份确认</string>
     <string name="password_panel_all_apps_to_lock_tip">加密应用</string>
+    <string name="setting_panel_all_apps_to_lock_tip">应用设置</string>
+    <string name="setting_lock_tip_locked">已开启，加锁应用打开时需要密码</string>
+    <string name="setting_lock_tip_unlocked">未开启，打开为应用加锁</string>
 </resources>

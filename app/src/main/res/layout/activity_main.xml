@@ -11,15 +11,21 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="@drawable/shape_password_panel_header"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_icon_setting"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@mipmap/ic_lock" />
 
         <TextView
             android:id="@+id/password_panel_guide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:drawablePadding="5dp"
-            android:drawableTop="@mipmap/ic_lock"
+            android:layout_marginTop="5dp"
             android:gravity="center_horizontal"
             android:text="@string/password_panel_remind_to_lock_tip"
             android:textColor="@color/colorWhite" />

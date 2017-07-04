@@ -6,9 +6,11 @@
 
     <color name="colorBlue">#00aadd</color>
     <color name="colorWhite">#f8f8f8</color>
-    <color name="colorGray">#cccccc</color>
+    <color name="colorGray">#efefef</color>
     <color name="colorGreen">#35ab7d</color>
     <color name="colorGreen2">#28bd7c</color>
+    <color name="colorBlack">#313131</color>
+    <color name="colorYellowDark">@color/themecolor</color>
 
     <!-- App主题颜色 -->
     <color name="themecolor">#77BF00</color>
@@ -44,4 +46,8 @@
     <color name="charline_hongse">#de0b08</color>
     <color name="charline_chengse">#e4a51e</color>
     <color name="charline_lvse">#64bb07</color>
+    <color name="line_color">#eaeaea</color>
+    <color name="bg_white_normal">#ffffff</color>
+    <color name="bg_white_selected">#f3f3f3</color>
+
 </resources>

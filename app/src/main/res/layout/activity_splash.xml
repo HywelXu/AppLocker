@@ -7,13 +7,12 @@
 
     <ImageView
         android:id="@+id/image_splash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
         android:background="@drawable/shape_password_panel_splash"
         android:contentDescription="@string/app_name"
-        android:scaleType="fitXY"
         android:src="@mipmap/ic_lock" />
 
     <TextView
@@ -25,7 +24,8 @@
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="应用锁" />
+        android:text="应用锁"
+        android:textColor="@color/colorBlack" />
 
     <TextView
         android:id="@+id/tv_appDes"
@@ -34,5 +34,6 @@
         android:layout_below="@+id/tv_appName"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:text="更安全更舒心" />
+        android:text="更安全更舒心"
+        android:textColor="@color/colorBlack" />
 </RelativeLayout>

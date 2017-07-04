@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements GestureLockCallba
     TextView message;
     @BindView(R.id.password_panel)
     PasswordPanel passwordPanel;
+    @BindView(R.id.iv_icon_setting)
+    ImageView mIconSettingIV;
 
     /**
      * 手势密码轨迹图案提示控件
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements GestureLockCallba
             case GestureLockCallback.TWICE_LINE_SAME:
                 message.setTextColor(getResources().getColor(R.color.colorWhite));
                 message.animate().rotationY(360).setDuration(500).start();
+                mIconSettingIV.animate().rotationY(360).setDuration(500).start();
                 message.setText("设置成功");
                 Toast.makeText(this, "设置成功", Toast.LENGTH_LONG).show();
 

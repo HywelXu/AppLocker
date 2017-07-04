@@ -28,8 +28,8 @@ dependencies {
     // Butter Knife
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.jakewharton:butterknife:8.4.0'
-    testCompile 'junit:junit:4.12'
     compile 'com.android.support:design:25.0.0'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'com.android.support:recyclerview-v7:25.3.1'
+    testCompile 'junit:junit:4.12'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }
