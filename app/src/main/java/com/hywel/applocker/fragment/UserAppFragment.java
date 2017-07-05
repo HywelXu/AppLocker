@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hywel.applocker.AppAdapter;
+import com.hywel.applocker.adapter.AppAdapter;
 import com.hywel.applocker.R;
 import com.hywel.applocker.model.AppInfo;
 

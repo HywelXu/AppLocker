@@ -20,6 +20,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hywel.applocker.LockerApplication;
 import com.hywel.applocker.R;
 import com.hywel.applocker.fragment.SysAppFragment;
 import com.hywel.applocker.fragment.UserAppFragment;
@@ -58,14 +59,15 @@ public class AppActivity extends FragmentActivity {
 
     private List<String> fragmentTitles;
     private List<Fragment> fragments;
-    private List<AppInfo> mAppInfos;
 
     private SysAppFragment mSystemSysAppFragment;
-    private UserAppFragment mUserSystemAppListFragment;
+    private UserAppFragment mUserAppListFragment;
 
     private int sysAppCount;
     private int userAppCount;
     private boolean hasSearched;
+    private List<AppInfo> allSysAppInfos = new ArrayList<>();
+    private List<AppInfo> allUserAppInfos = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,38 +75,44 @@ public class AppActivity extends FragmentActivity {
         setContentView(R.layout.activity_app);
         ButterKnife.bind(this);
 
-        startBackAnim();
+        setAppList();
+        startHeaderAnim();
         setViewPager();
     }
 
+    private void setAppList() {
+        //        allSysAppInfos = LoadApkUtils.getAllSysAppInfos(this);
+//        allUserAppInfos = LoadApkUtils.getAllUserAppInfos(this);
+        allSysAppInfos = LockerApplication.allSysAppInfos;
+        allUserAppInfos = LockerApplication.allUserAppInfos;
+        sysAppCount = allSysAppInfos.size();
+        userAppCount = allUserAppInfos.size();
+    }
+
+    /**
+     * 设置 ViewPager
+     */
     private void setViewPager() {
         fragmentTitles = new ArrayList<>();
-        fragmentTitles.add("系统应用（" + getAppInfos().size() + "）");
-        fragmentTitles.add("用户应用（" + getAppInfos().size() + "）");
+        fragmentTitles.add("系统应用（" + sysAppCount + "）");
+        fragmentTitles.add("用户应用（" + userAppCount + "）");
 
         fragments = new ArrayList<>();
-        mSystemSysAppFragment = SysAppFragment.newInstance(getAppInfos());
-        mUserSystemAppListFragment = UserAppFragment.newInstance(getAppInfos());
+        mSystemSysAppFragment = SysAppFragment.newInstance(allSysAppInfos);
+        mUserAppListFragment = UserAppFragment.newInstance(allUserAppInfos);
         fragments.add(mSystemSysAppFragment);
-        fragments.add(mUserSystemAppListFragment);
+        fragments.add(mUserAppListFragment);
 
         mViewPager.setAdapter(new AppFragmentAdapter(getSupportFragmentManager()));
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
-    private void startBackAnim() {
+    /**
+     * 布局头部的动画
+     */
+    private void startHeaderAnim() {
         mIconSettingIV.animate().rotationY(360f).setDuration(1000).setInterpolator(new AnticipateInterpolator()).start();
         mPasswordGuideTV.animate().rotationX(360f).setDuration(1500).setInterpolator(new DecelerateInterpolator()).start();
-    }
-
-    public List<AppInfo> getAppInfos() {
-        mAppInfos = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            AppInfo info = new AppInfo();
-            info.setAppName("App" + i);
-            mAppInfos.add(info);
-        }
-        return mAppInfos;
     }
 
     /**
@@ -129,7 +137,7 @@ public class AppActivity extends FragmentActivity {
                 mSearchView.setVisibility(View.VISIBLE);
             }
             mPasswordGuideTV.setText("搜索应用");
-            mPasswordGuideLayout.setBackgroundResource(R.drawable.shape_password_panel_header_dark);
+            mPasswordGuideLayout.setBackgroundResource(R.drawable.shape_password_panel_header_search_mode);
             mSearchView.setBackgroundResource(R.drawable.bg_frame_search_dark);
             mSearchView.startAnimation(animationIn);
             mEditSearchTV.startAnimation(animationOut);
@@ -139,7 +147,7 @@ public class AppActivity extends FragmentActivity {
                 mEditSearchTV.setVisibility(View.VISIBLE);
             }
             mPasswordGuideTV.setText("加密应用");
-            mPasswordGuideLayout.setBackgroundResource(R.drawable.shape_password_panel_header);
+            mPasswordGuideLayout.setBackgroundResource(R.drawable.shape_password_panel_header_applayout);
             mSearchView.setBackgroundResource(R.drawable.bg_frame_search);
             mSearchView.startAnimation(animationOut);
             mEditSearchTV.startAnimation(animationIn);

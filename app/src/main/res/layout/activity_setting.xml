@@ -15,7 +15,7 @@
             android:id="@+id/setting_panel_guide_layout"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@drawable/shape_password_panel_header"
+            android:background="@drawable/shape_password_panel_header_settinglayout"
             android:gravity="center"
             android:orientation="vertical">
 

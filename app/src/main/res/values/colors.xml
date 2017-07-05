@@ -11,6 +11,8 @@
     <color name="colorGreen2">#28bd7c</color>
     <color name="colorBlack">#313131</color>
     <color name="colorYellowDark">@color/themecolor</color>
+    <color name="colorAppLayout">#779f00</color>
+    <color name="colorSettingLayout">#4a0af0</color>
 
     <!-- App主题颜色 -->
     <color name="themecolor">#77BF00</color>

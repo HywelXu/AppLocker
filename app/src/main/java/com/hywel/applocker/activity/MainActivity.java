@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hywel.applocker.R;
+import com.hywel.applocker.service.FindApkService;
 import com.hywel.applocker.widget.GestureLockView.GestureLockCallback;
 import com.hywel.applocker.widget.GestureLockView.GestureLockIndicator;
 import com.hywel.applocker.widget.PasswordPanel;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements GestureLockCallba
      */
     @BindView(R.id.activity_gustlockset_indicator)
     GestureLockIndicator guestIndictor;
+    private Intent serviceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,23 @@ public class MainActivity extends AppCompatActivity implements GestureLockCallba
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         passwordPanel.setxCallback(this);
+        startApkService();
+    }
+
+    private void startApkService() {
+        serviceIntent = new Intent(this, FindApkService.class);
+        startService(serviceIntent);
+    }
+
+    private void stopApkService() {
+        if (null != serviceIntent)
+            stopService(serviceIntent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopApkService();
     }
 
     /**

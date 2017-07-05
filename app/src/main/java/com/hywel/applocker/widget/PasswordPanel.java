@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -255,8 +254,8 @@ public class PasswordPanel extends ViewGroup {
     protected void onDraw(Canvas canvas) {
         int width = getWidth();
         int height = getHeight();
-        Log.d("PasswordPanel", "width:" + width);
-        Log.d("PasswordPanel", "height:" + height);
+//        Log.d("PasswordPanel", "width:" + width);
+//        Log.d("PasswordPanel", "height:" + height);
 
         if (isVerify && isError) {// 绘制错误提示轨迹
             drawaLineMethod(canvas, null, true);

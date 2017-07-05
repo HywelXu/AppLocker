@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 # Built application files
 *.apk
@@ -55,7 +54,6 @@ google-services.json
 freeline.py
 freeline/
 freeline_project_description.json
-=======
 .gradle
 /local.properties
 /.idea/workspace.xml
@@ -63,5 +61,4 @@ freeline_project_description.json
 .DS_Store
 /build
 /captures
->>>>>>> 8039b07... first commit
 .idea/vcs.xml

@@ -11,4 +11,8 @@
     <string name="setting_panel_all_apps_to_lock_tip">应用设置</string>
     <string name="setting_lock_tip_locked">已开启，加锁应用打开时需要密码</string>
     <string name="setting_lock_tip_unlocked">未开启，打开为应用加锁</string>
+
+    <string name="setting_panel_all_about_me_tip">关于</string>
+    <string name="setting_panel_all_about_me_share_title">分享</string>
+    <string name="setting_panel_all_about_me_share_text">这是一个简单加密应用，欢迎评测！</string>
 </resources>

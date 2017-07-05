@@ -22,10 +22,13 @@
         android:text="应用名称"
         android:textSize="16sp" />
 
-    <Switch
+    <CheckBox
         android:id="@+id/app_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:button="@drawable/bg_checkbox_lock"
+        android:checked="false" />
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.hywel.applocker.model;
 
+import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,9 +10,11 @@ import android.os.Parcelable;
 
 public class AppInfo implements Parcelable {
     private long id;
-    private String appName;
-    private String packageName;
-    private String appIcon;
+    private String appName;//应用名
+    private String packageName;//包名
+    private String versionName;//版本号
+    private String appIcon;//应用图标地址
+    private Drawable appDrawable;//应用图标
     private boolean isLocked;//是否已锁
     private boolean isRecommedLocked;//是否推荐加锁
     private boolean isSetUnLock;
@@ -23,6 +26,22 @@ public class AppInfo implements Parcelable {
         this.appName = appName;
         this.appIcon = appIcon;
         this.isLocked = isLocked;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
+    }
+
+    public Drawable getAppDrawable() {
+        return appDrawable;
+    }
+
+    public void setAppDrawable(Drawable appDrawable) {
+        this.appDrawable = appDrawable;
     }
 
     public String getAppName() {
