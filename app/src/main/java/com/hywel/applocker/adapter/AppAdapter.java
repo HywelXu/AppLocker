@@ -43,8 +43,8 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
     public void onBindViewHolder(final AppViewHolder holder, final int position) {
         final AppInfo appInfo = mAppInfos.get(position);
 
-        renderItemView(holder, appInfo, position);
 //        renderItemLockStatus(holder.sAppSwitch, appInfo, position);
+        renderItemView(holder, appInfo, position);
     }
 
     /**
@@ -71,18 +71,28 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
         });
     }
 
-
     private void renderItemLockStatus(CheckBox checkBox, AppInfo info, int position) {
         List<AppInfo> lockedPackNames = SpUtil.getInstance().getLockedPackNames();
         if (BuildConfig.DEBUG)
             Log.d("AppAdapter", "lockedPackNames size-> " + lockedPackNames.size());
 
-        if (AndroidTools.isListValidate(lockedPackNames) && position < lockedPackNames.size()) {
-            if (lockedPackNames.get(position).getId() == info.getId()) {
-                checkBox.isChecked();
-            } else {
-//                checkBox.setChecked(false);
-                info.setLocked(false);
+        if (AndroidTools.isListValidate(lockedPackNames)) {
+            for (int i = 0; i < lockedPackNames.size(); i++) {
+                AppInfo appInfo = lockedPackNames.get(i);
+                if (appInfo == null) {
+                    Log.d("AppAdapter", "appInfo为空");
+                    return;
+                }
+
+                String packageName = appInfo.getPackageName();
+                Log.d("AppAdapter", "packageName-->" + packageName);
+                if (packageName.equals(info.getPackageName())) {
+                    info.setLocked(true);
+//                    checkBox.setChecked(true);
+                } else {
+                    info.setLocked(false);
+//                    checkBox.setChecked(false);
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 
 import com.hywel.applocker.R;
 import com.hywel.applocker.model.GestureLockInfo;
+import com.hywel.applocker.utils.SpUtil;
 import com.hywel.applocker.widget.GestureLockView.GestureLockCallback;
 
 import java.util.ArrayList;
@@ -100,6 +102,7 @@ public class PasswordPanel extends ViewGroup {
      * 默认颜色
      */
     private int defaultColor = 0xFF0000;
+    private boolean isFirstIn;
 
     public PasswordPanel(Context context) {
         this(context, null);
@@ -187,6 +190,8 @@ public class PasswordPanel extends ViewGroup {
         linePaint.setAntiAlias(true);
         linePaint.setStyle(Paint.Style.STROKE);// 设置非填充
         linePaint.setStrokeWidth(lineWidth);
+
+        isFirstIn = SpUtil.getInstance().isFirstIn();
     }
 
     /**
@@ -282,29 +287,48 @@ public class PasswordPanel extends ViewGroup {
                             isVerify = true;
                         }
                         clearMethod();
-                        if (xCallback != null) {
-                            xCallback
-                                    .onLockCallback(GestureLockCallback.FIRST_LINE_OVER);
+                        if (isFirstIn) {
+                            if (xCallback != null) {
+                                xCallback
+                                        .onLockCallback(GestureLockCallback.FIRST_LINE_OVER);
+                            }
+                        } else {
+                            String passwordPanelVerifyCode = SpUtil.getInstance().getPasswordPanelVerifyCode();
+                            if (haschoosed.toString().equals(passwordPanelVerifyCode)) {
+                                if (xCallback != null) {
+                                    clearMethod();
+                                    xCallback
+                                            .onLockCallback(GestureLockCallback.TWICE_LINE_SAME);
+                                }
+                            }
                         }
                     } else {
                         StringBuilder verifychoosed = new StringBuilder();
                         for (GestureLockInfo xinfo : arrayChoosed) {
                             verifychoosed.append(xinfo.getPosition());
                         }
-                        if (haschoosed.toString().equals(
-                                verifychoosed.toString())) {
-                            if (xCallback != null) {
-                                clearMethod();
-                                xCallback
-                                        .onLockCallback(GestureLockCallback.TWICE_LINE_SAME);
+                        Log.d("PasswordPanel", "isFirstIn-->" + isFirstIn);
+                        if (isFirstIn) {
+                            SpUtil.getInstance().savePasswordPanelVerifyCode(verifychoosed.toString());
+
+                            if (haschoosed.toString().equals(
+                                    verifychoosed.toString())) {
+                                if (xCallback != null) {
+                                    clearMethod();
+                                    xCallback
+                                            .onLockCallback(GestureLockCallback.TWICE_LINE_SAME);
+                                }
+
+                            } else {
+                                if (xCallback != null) {
+                                    xCallback
+                                            .onLockCallback(GestureLockCallback.TWICE_NOT_SAME);
+                                    isError = true;
+                                    postInvalidate();
+                                }
                             }
-                        } else {
-                            if (xCallback != null) {
-                                xCallback
-                                        .onLockCallback(GestureLockCallback.TWICE_NOT_SAME);
-                                isError = true;
-                                postInvalidate();
-                            }
+
+                            SpUtil.getInstance().saveIsFirstIn(false);
                         }
                     }
                 }

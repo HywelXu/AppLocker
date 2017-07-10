@@ -121,7 +121,31 @@ public class AppActivity extends FragmentActivity {
     public void handleSearch(View view) {
         hasSearched = true;
         Toast.makeText(this, "请输入关键字", Toast.LENGTH_SHORT).show();
-        handleSearchLayout(hasSearched);
+        animSearchLayout(hasSearched);
+        searchMethod();
+    }
+
+    private void searchMethod() {
+        // 设置搜索文本监听
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            // 当点击搜索按钮时触发该方法
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(AppActivity.this, "query" + query, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            // 当搜索内容改变时触发该方法
+            @Override
+            public boolean onQueryTextChange(String newText) {
+//                if (!TextUtils.isEmpty(newText)) {
+//                    Toast.makeText(AppActivity.this, "newText" + newText, Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(AppActivity.this, "newText is null", Toast.LENGTH_SHORT).show();
+//                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -129,7 +153,7 @@ public class AppActivity extends FragmentActivity {
      *
      * @param hasSearched 是否点击过搜索按钮
      */
-    private void handleSearchLayout(boolean hasSearched) {
+    private void animSearchLayout(boolean hasSearched) {
         Animation animationIn = AnimationUtils.loadAnimation(this, R.anim.drop_in);
         Animation animationOut = AnimationUtils.loadAnimation(this, R.anim.drop_out);
         if (hasSearched) {
@@ -161,7 +185,7 @@ public class AppActivity extends FragmentActivity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 if (hasSearched) {
-                    handleSearchLayout(false);
+                    animSearchLayout(false);
                     hasSearched = false;
                 } else {
                     onBackPressed();

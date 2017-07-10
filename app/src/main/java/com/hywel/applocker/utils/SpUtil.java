@@ -3,7 +3,6 @@ package com.hywel.applocker.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -21,10 +20,12 @@ import java.util.List;
 
 public class SpUtil {
     private volatile static SpUtil mInstance;
+    private static final String SP_NAME = "hywel_app_locker";
 
     private Context mContext;
     private SharedPreferences mPref;
     private Gson gson;
+    private List<AppInfo> lockedNames = new ArrayList<>();
 
     private SpUtil() {
     }
@@ -46,7 +47,8 @@ public class SpUtil {
             mContext = context;
         }
         if (mPref == null) {
-            mPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+//            mPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+            mPref = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         }
         //=================================
         //解决 Gson 异常
@@ -140,17 +142,49 @@ public class SpUtil {
         editor.apply();
     }
 
+    public void saveIsFirstIn(boolean isFirstIn) {
+        putBoolean(Config.SP_KEY_APP_IS_FIRST_IN, isFirstIn);
+    }
+
+    public boolean isFirstIn() {
+        return getBoolean(Config.SP_KEY_APP_IS_FIRST_IN, true);
+    }
+
+    /**
+     * 存储解锁密码
+     *
+     * @param code
+     */
+    public void savePasswordPanelVerifyCode(String code) {
+        putString(Config.SP_KEY_APP_VERIFY_CODE, code);
+    }
+
+    /**
+     * 获取存储密码
+     *
+     * @return
+     */
+    public String getPasswordPanelVerifyCode() {
+        return getString(Config.SP_KEY_APP_VERIFY_CODE);
+    }
+
     /**
      * 储存要上锁的应用包名
      *
      * @param dataValue 要上锁的应用包名
      */
     public void saveLockedPackNameItem(AppInfo dataValue) {
-        List<AppInfo> lockedNames = getLockedPackNames();
+        lockedNames = getLockedPackNames();
         if (!AndroidTools.isListValidate(lockedNames)) {
             lockedNames = new ArrayList<>();
         }
-        lockedNames.add(dataValue);
+        List<String> lockedAppPackNames = new ArrayList<>();
+        for (AppInfo info : lockedNames) {
+            lockedAppPackNames.add(info.getPackageName());
+        }
+        if (!lockedAppPackNames.contains(dataValue.getPackageName())) {
+            lockedNames.add(dataValue);
+        }
         putString(Config.SP_KEY_LOCKED_PACKAGE_NAME, gson.toJson(lockedNames));
     }
 
@@ -160,19 +194,18 @@ public class SpUtil {
      * @return 要上锁的应用包名集合
      */
     public List<AppInfo> getLockedPackNames() {
-        List<AppInfo> lockedPackNames = new ArrayList<>();
         try {
             String lockedPackNameJson = getString(Config.SP_KEY_LOCKED_PACKAGE_NAME, "");
             if (BuildConfig.DEBUG) Log.d("SpUtil", "lockedPackNameJson->" + lockedPackNameJson);
             if (!TextUtils.isEmpty(lockedPackNameJson)) {
-                lockedPackNames = gson.fromJson(lockedPackNameJson,
+                lockedNames = gson.fromJson(lockedPackNameJson,
                         new TypeToken<List<AppInfo>>() {
                         }.getType());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return lockedPackNames;
+        return lockedNames;
     }
 
     /**
@@ -181,9 +214,14 @@ public class SpUtil {
      * @param value 不需要上锁的应用包名
      */
     public void removeLockedPackNameItem(AppInfo value) {
-        List<AppInfo> lockedPackNames = getLockedPackNames();
-        int containTheItem = isContainTheItem(lockedPackNames, value);
-        lockedPackNames.remove(containTheItem);
+        lockedNames = getLockedPackNames();
+        List<String> lockedAppPackNames = new ArrayList<>();
+        for (AppInfo info : lockedNames) {
+            lockedAppPackNames.add(info.getPackageName());
+        }
+        int containTheItem = isContainTheItem(lockedAppPackNames, value);
+        if (containTheItem >= 0 && containTheItem < lockedNames.size())
+            lockedNames.remove(containTheItem);
     }
 
     /**
@@ -193,10 +231,11 @@ public class SpUtil {
      * @param info        应用包名
      * @return 此应用在集合中的位置
      */
-    public int isContainTheItem(List<AppInfo> lockedNames, AppInfo info) {
+    public int isContainTheItem(List<String> lockedNames, AppInfo info) {
         for (int i = 0; i < lockedNames.size(); i++) {
-            if (lockedNames.get(i).getId() == info.getId()) {
-                if (BuildConfig.DEBUG) Log.d("SpUtil", "id: " + lockedNames.get(i).getId());
+            if (lockedNames.get(i).equals(info.getPackageName())) {
+                if (BuildConfig.DEBUG)
+                    Log.d("SpUtil", "id: " + lockedNames.get(i));
                 return i;
             }
         }

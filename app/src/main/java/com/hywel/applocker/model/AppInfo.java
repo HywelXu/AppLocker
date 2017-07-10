@@ -1,14 +1,14 @@
 package com.hywel.applocker.model;
 
 import android.graphics.drawable.Drawable;
-import android.os.Parcel;
-import android.os.Parcelable;
+
+import java.io.Serializable;
 
 /**
  * Created by hywel on 2017/7/3.
  */
 
-public class AppInfo implements Parcelable {
+public class AppInfo implements Serializable {
     private long id;
     private String appName;//应用名
     private String packageName;//包名
@@ -101,40 +101,17 @@ public class AppInfo implements Parcelable {
     }
 
     @Override
-    public int describeContents() {
-        return 0;
+    public String toString() {
+        return "AppInfo{" +
+                "id=" + id +
+                ", appName='" + appName + '\'' +
+                ", packageName='" + packageName + '\'' +
+                ", versionName='" + versionName + '\'' +
+                ", appIcon='" + appIcon + '\'' +
+                ", appDrawable=" + appDrawable +
+                ", isLocked=" + isLocked +
+                ", isRecommedLocked=" + isRecommedLocked +
+                ", isSetUnLock=" + isSetUnLock +
+                '}';
     }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this.id);
-        dest.writeString(this.appName);
-        dest.writeString(this.packageName);
-        dest.writeString(this.appIcon);
-        dest.writeByte(this.isLocked ? (byte) 1 : (byte) 0);
-        dest.writeByte(this.isRecommedLocked ? (byte) 1 : (byte) 0);
-        dest.writeByte(this.isSetUnLock ? (byte) 1 : (byte) 0);
-    }
-
-    protected AppInfo(Parcel in) {
-        this.id = in.readLong();
-        this.appName = in.readString();
-        this.packageName = in.readString();
-        this.appIcon = in.readString();
-        this.isLocked = in.readByte() != 0;
-        this.isRecommedLocked = in.readByte() != 0;
-        this.isSetUnLock = in.readByte() != 0;
-    }
-
-    public static final Parcelable.Creator<AppInfo> CREATOR = new Parcelable.Creator<AppInfo>() {
-        @Override
-        public AppInfo createFromParcel(Parcel source) {
-            return new AppInfo(source);
-        }
-
-        @Override
-        public AppInfo[] newArray(int size) {
-            return new AppInfo[size];
-        }
-    };
 }

@@ -1,14 +1,17 @@
 package com.hywel.applocker.activity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.animation.AnticipateInterpolator;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hywel.applocker.R;
 
@@ -36,8 +39,8 @@ public class AboutActivity extends AppCompatActivity {
      * 布局头部的动画
      */
     private void startHeaderAnim() {
-        mIconSettingIV.animate().rotationY(360f).setDuration(1000).setInterpolator(new AnticipateInterpolator()).start();
-        mPasswordGuideTV.animate().rotationX(360f).setDuration(1500).setInterpolator(new DecelerateInterpolator()).start();
+        mIconSettingIV.animate().rotationY(360f).setDuration(1000).setInterpolator(new OvershootInterpolator()).start();
+        mPasswordGuideTV.animate().rotationX(360f).setDuration(1000).setInterpolator(new AccelerateInterpolator()).start();
     }
 
     public void gotoShare(View view) {
@@ -53,8 +56,22 @@ public class AboutActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(intent, title));
     }
 
-    //// TODO: 2017/7/5 加入分享截图功能
-
+    /**
+     * 根据应用包名，跳转到应用市场
+     *
+     * @param activity    承载跳转的Activity
+     * @param packageName 所需下载（评论）的应用包名
+     */
+    public static void shareAppShop(Activity activity, String packageName) {
+        try {
+            Uri uri = Uri.parse("market://details?id=" + packageName);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            activity.startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(activity, "您没有安装应用市场", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     public void onBackArrowClicked(View view) {
         onBackPressed();

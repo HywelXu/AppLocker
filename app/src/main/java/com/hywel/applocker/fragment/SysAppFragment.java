@@ -2,7 +2,6 @@ package com.hywel.applocker.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -13,10 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hywel.applocker.adapter.AppAdapter;
 import com.hywel.applocker.R;
+import com.hywel.applocker.adapter.AppAdapter;
 import com.hywel.applocker.model.AppInfo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,14 +47,16 @@ public class SysAppFragment extends Fragment {
         if (getArguments() == null) {
             mAppInfos = new ArrayList<>();
         } else {
-            mAppInfos = getArguments().getParcelableArrayList("datas");
+//            mAppInfos = getArguments().getParcelableArrayList("datas");
+            mAppInfos = (List<AppInfo>) getArguments().getSerializable("datas");
         }
     }
 
     public static SysAppFragment newInstance(List<AppInfo> list) {
         SysAppFragment fragment = new SysAppFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList("datas", (ArrayList<? extends Parcelable>) list);
+//        args.putParcelableArrayList("datas", (ArrayList<? extends Parcelable>) list);
+        args.putSerializable("datas", (ArrayList<? extends Serializable>) list);
         fragment.setArguments(args);
         return fragment;
     }

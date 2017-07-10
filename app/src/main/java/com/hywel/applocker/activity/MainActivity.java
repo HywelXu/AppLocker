@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.hywel.applocker.R;
 import com.hywel.applocker.service.FindApkService;
+import com.hywel.applocker.utils.SpUtil;
 import com.hywel.applocker.widget.GestureLockView.GestureLockCallback;
 import com.hywel.applocker.widget.GestureLockView.GestureLockIndicator;
 import com.hywel.applocker.widget.PasswordPanel;
@@ -88,13 +89,16 @@ public class MainActivity extends AppCompatActivity implements GestureLockCallba
                 message.setTextColor(getResources().getColor(R.color.colorWhite));
                 message.animate().rotationY(360).setDuration(500).start();
                 mIconSettingIV.animate().rotationY(360).setDuration(500).start();
-                message.setText("设置成功");
-                Toast.makeText(this, "设置成功", Toast.LENGTH_LONG).show();
+                boolean firstIn = SpUtil.getInstance().isFirstIn();
+                String tip = firstIn ? "设置成功" : "解锁成功";
+                message.setText(tip);
+                Toast.makeText(this, tip, Toast.LENGTH_LONG).show();
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         startActivity(new Intent(MainActivity.this, AppActivity.class));
+                        finish();
                     }
                 }, 500);
                 break;
