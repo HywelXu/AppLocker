@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -95,7 +96,7 @@ public class FindApkService extends Service {
 
                 appInfo.setId(1 + 2 * i);
                 appInfo.setAppName(appName);
-                appInfo.setAppDrawable(icon);
+                appInfo.setAppDrawable(((BitmapDrawable) icon).getBitmap());
                 appInfo.setPackageName(packageName);
                 appInfo.setVersionName(versionName);
                 boolean locked = SpUtil.getInstance().isTheAppLocked(appInfo.getId());

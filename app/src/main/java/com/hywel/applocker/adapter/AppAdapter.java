@@ -58,7 +58,7 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
         final String appName = appInfo.getAppName();
 
         holder.sAppName.setText(appName);
-        holder.sAppIcon.setImageDrawable(appInfo.getAppDrawable());
+        holder.sAppIcon.setImageBitmap(appInfo.getAppDrawable());
         holder.sAppSwitch.setChecked(appInfo.isLocked());
         holder.sAppSwitch.setOnClickListener(new View.OnClickListener() {
             @Override

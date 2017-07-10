@@ -2,6 +2,7 @@ package com.hywel.applocker.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,7 +17,6 @@ import com.hywel.applocker.R;
 import com.hywel.applocker.adapter.AppAdapter;
 import com.hywel.applocker.model.AppInfo;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,16 +47,16 @@ public class UserAppFragment extends Fragment {
         if (getArguments() == null) {
             mAppInfos = new ArrayList<>();
         } else {
-//            mAppInfos = getArguments().getParcelableArrayList("datas");
-            mAppInfos = (List<AppInfo>) getArguments().getSerializable("datas");
+            mAppInfos = getArguments().getParcelableArrayList("datas");
+//            mAppInfos = (List<AppInfo>) getArguments().getSerializable("datas");
         }
     }
 
     public static UserAppFragment newInstance(List<AppInfo> list) {
         UserAppFragment fragment = new UserAppFragment();
         Bundle args = new Bundle();
-//        args.putParcelableArrayList("datas", (ArrayList<? extends Parcelable>) list);
-        args.putSerializable("datas", (ArrayList<? extends Serializable>) list);
+        args.putParcelableArrayList("datas", (ArrayList<? extends Parcelable>) list);
+//        args.putSerializable("datas", (ArrayList<? extends Serializable>) list);
         fragment.setArguments(args);
         return fragment;
     }

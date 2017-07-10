@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -99,7 +101,8 @@ public class LoadApkUtils {
 //                int uid = applicationInfo.uid;
 
                 appInfo.setAppName(appName);
-                appInfo.setAppDrawable(icon);
+                Bitmap bitmapIcon = ((BitmapDrawable) icon).getBitmap();
+                appInfo.setAppDrawable(bitmapIcon);
                 appInfo.setPackageName(packageName);
                 appInfo.setVersionName(versionName);
                 appInfos.add(appInfo);
@@ -132,7 +135,8 @@ public class LoadApkUtils {
 //                int uid = applicationInfo.uid;
 
                 appInfo.setAppName(appName);
-                appInfo.setAppDrawable(icon);
+                Bitmap bitmapIcon = ((BitmapDrawable) icon).getBitmap();
+                appInfo.setAppDrawable(bitmapIcon);
                 appInfo.setPackageName(packageName);
                 appInfo.setVersionName(versionName);
                 appInfos.add(appInfo);
