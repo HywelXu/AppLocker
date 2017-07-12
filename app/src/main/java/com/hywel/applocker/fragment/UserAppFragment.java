@@ -1,8 +1,8 @@
 package com.hywel.applocker.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -18,10 +18,6 @@ import com.hywel.applocker.adapter.AppAdapter;
 import com.hywel.applocker.model.AppInfo;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by hywel on 2017/7/3.
@@ -29,11 +25,10 @@ import butterknife.ButterKnife;
 
 public class UserAppFragment extends Fragment {
 
-    @BindView(R.id.app_recycler_view)
     RecyclerView mAppListRV;
 
     private Context mContext;
-    private List<AppInfo> mAppInfos;
+    private ArrayList<AppInfo> mAppInfos;
 
     @Override
     public void onAttach(Context context) {
@@ -48,15 +43,15 @@ public class UserAppFragment extends Fragment {
             mAppInfos = new ArrayList<>();
         } else {
             mAppInfos = getArguments().getParcelableArrayList("datas");
-//            mAppInfos = (List<AppInfo>) getArguments().getSerializable("datas");
+//            mAppInfos = (ArrayList<AppInfo>) getArguments().getSerializable("datas");
         }
     }
 
-    public static UserAppFragment newInstance(List<AppInfo> list) {
+    public static UserAppFragment newInstance(ArrayList<AppInfo> list) {
         UserAppFragment fragment = new UserAppFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList("datas", (ArrayList<? extends Parcelable>) list);
-//        args.putSerializable("datas", (ArrayList<? extends Serializable>) list);
+        args.putParcelableArrayList("datas", list);
+//        args.putSerializable("datas", list);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,9 +60,8 @@ public class UserAppFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_applist, null);
-        ButterKnife.bind(this, view);
-
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_applist, null);
+        mAppListRV = (RecyclerView) view.findViewById(R.id.app_recycler_view);
         setRecyclerView();
         return view;
     }

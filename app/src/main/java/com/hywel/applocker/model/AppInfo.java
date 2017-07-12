@@ -1,6 +1,6 @@
 package com.hywel.applocker.model;
 
-import android.graphics.Bitmap;
+import android.content.pm.ApplicationInfo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,12 +9,14 @@ import android.os.Parcelable;
  */
 
 public class AppInfo implements Parcelable {
-    private long id;
+    private Long id;
     private String appName;//应用名
     private String packageName;//包名
     private String versionName;//版本号
     private String appIcon;//应用图标地址
-    private Bitmap appDrawable;//应用图标
+
+    //        private Bitmap appDrawable;//应用图标
+    private ApplicationInfo applicationInfo;
     private boolean isLocked;//是否已锁
     private boolean isRecommedLocked;//是否推荐加锁
     private boolean isSetUnLock;
@@ -22,18 +24,12 @@ public class AppInfo implements Parcelable {
     public AppInfo() {
     }
 
-    public AppInfo(String appName, String appIcon, boolean isLocked) {
-        this.appName = appName;
-        this.appIcon = appIcon;
-        this.isLocked = isLocked;
+    public ApplicationInfo getApplicationInfo() {
+        return applicationInfo;
     }
 
-    public Bitmap getAppDrawable() {
-        return appDrawable;
-    }
-
-    public void setAppDrawable(Bitmap appDrawable) {
-        this.appDrawable = appDrawable;
+    public void setApplicationInfo(ApplicationInfo applicationInfo) {
+        this.applicationInfo = applicationInfo;
     }
 
     public String getVersionName() {
@@ -69,11 +65,11 @@ public class AppInfo implements Parcelable {
         isLocked = locked;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -101,6 +97,44 @@ public class AppInfo implements Parcelable {
         isSetUnLock = setUnLock;
     }
 
+
+    public boolean getIsLocked() {
+        return this.isLocked;
+    }
+
+    public void setIsLocked(boolean isLocked) {
+        this.isLocked = isLocked;
+    }
+
+    public boolean getIsRecommedLocked() {
+        return this.isRecommedLocked;
+    }
+
+    public void setIsRecommedLocked(boolean isRecommedLocked) {
+        this.isRecommedLocked = isRecommedLocked;
+    }
+
+    public boolean getIsSetUnLock() {
+        return this.isSetUnLock;
+    }
+
+    public void setIsSetUnLock(boolean isSetUnLock) {
+        this.isSetUnLock = isSetUnLock;
+    }
+
+
+    public AppInfo(Long id, String appName, String packageName, String versionName, String appIcon,
+                   boolean isLocked, boolean isRecommedLocked, boolean isSetUnLock) {
+        this.id = id;
+        this.appName = appName;
+        this.packageName = packageName;
+        this.versionName = versionName;
+        this.appIcon = appIcon;
+        this.isLocked = isLocked;
+        this.isRecommedLocked = isRecommedLocked;
+        this.isSetUnLock = isSetUnLock;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -108,24 +142,24 @@ public class AppInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this.id);
+        dest.writeValue(this.id);
         dest.writeString(this.appName);
         dest.writeString(this.packageName);
         dest.writeString(this.versionName);
         dest.writeString(this.appIcon);
-        dest.writeParcelable(this.appDrawable, flags);
+        dest.writeParcelable(this.applicationInfo, flags);
         dest.writeByte(this.isLocked ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isRecommedLocked ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isSetUnLock ? (byte) 1 : (byte) 0);
     }
 
     protected AppInfo(Parcel in) {
-        this.id = in.readLong();
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
         this.appName = in.readString();
         this.packageName = in.readString();
         this.versionName = in.readString();
         this.appIcon = in.readString();
-        this.appDrawable = in.readParcelable(Bitmap.class.getClassLoader());
+        this.applicationInfo = in.readParcelable(ApplicationInfo.class.getClassLoader());
         this.isLocked = in.readByte() != 0;
         this.isRecommedLocked = in.readByte() != 0;
         this.isSetUnLock = in.readByte() != 0;

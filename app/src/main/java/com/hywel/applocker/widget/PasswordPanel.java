@@ -191,7 +191,7 @@ public class PasswordPanel extends ViewGroup {
         linePaint.setStyle(Paint.Style.STROKE);// 设置非填充
         linePaint.setStrokeWidth(lineWidth);
 
-        isFirstIn = SpUtil.getInstance().isFirstIn();
+        isFirstIn = SpUtil.getInstance(getContext()).isFirstIn();
     }
 
     /**
@@ -293,7 +293,7 @@ public class PasswordPanel extends ViewGroup {
                                         .onLockCallback(GestureLockCallback.FIRST_LINE_OVER);
                             }
                         } else {
-                            String passwordPanelVerifyCode = SpUtil.getInstance().getPasswordPanelVerifyCode();
+                            String passwordPanelVerifyCode = SpUtil.getInstance(getContext()).getPasswordPanelVerifyCode();
                             if (haschoosed.toString().equals(passwordPanelVerifyCode)) {
                                 if (xCallback != null) {
                                     clearMethod();
@@ -309,7 +309,7 @@ public class PasswordPanel extends ViewGroup {
                         }
                         Log.d("PasswordPanel", "isFirstIn-->" + isFirstIn);
                         if (isFirstIn) {
-                            SpUtil.getInstance().savePasswordPanelVerifyCode(verifychoosed.toString());
+                            SpUtil.getInstance(getContext()).savePasswordPanelVerifyCode(verifychoosed.toString());
 
                             if (haschoosed.toString().equals(
                                     verifychoosed.toString())) {
@@ -328,7 +328,7 @@ public class PasswordPanel extends ViewGroup {
                                 }
                             }
 
-                            SpUtil.getInstance().saveIsFirstIn(false);
+                            SpUtil.getInstance(getContext()).saveIsFirstIn(false);
                         }
                     }
                 }

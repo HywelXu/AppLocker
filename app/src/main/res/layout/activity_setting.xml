@@ -6,46 +6,6 @@
     android:orientation="vertical"
     tools:context="com.hywel.applocker.activity.SettingActivity">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-        <LinearLayout
-            android:id="@+id/setting_panel_guide_layout"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="@drawable/shape_password_panel_header_settinglayout"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/iv_icon_setting"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@mipmap/ic_lock" />
-
-            <TextView
-                android:id="@+id/setting_panel_guide"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:gravity="center_horizontal"
-                android:text="@string/setting_panel_all_apps_to_lock_tip"
-                android:textColor="@color/colorWhite" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/iv_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_margin="5dp"
-            android:onClick="onBackArrowClicked"
-            android:src="@drawable/arrow_left"
-            tools:ignore="RtlHardcoded" />
-    </FrameLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="55dp"
@@ -63,7 +23,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/lock_tip"
+            android:id="@+id/lock_text"
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:layout_below="@+id/lock_title"
@@ -88,7 +48,7 @@
         android:background="@color/line_color" />
 
     <TextView
-        android:id="@+id/btn_change_pwd"
+        android:id="@+id/change_pwd"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:background="@drawable/bg_white_clicked"

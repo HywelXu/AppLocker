@@ -1,6 +1,8 @@
 package com.hywel.applocker.adapter;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.util.Log;
@@ -11,10 +13,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hywel.applocker.BuildConfig;
 import com.hywel.applocker.R;
 import com.hywel.applocker.model.AppInfo;
-import com.hywel.applocker.utils.AndroidTools;
 import com.hywel.applocker.utils.SpUtil;
 
 import java.util.List;
@@ -24,6 +24,7 @@ import java.util.List;
  */
 
 public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
+    private final PackageManager packageManager;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private List<AppInfo> mAppInfos;
@@ -31,6 +32,7 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
     public AppAdapter(Context mContext, List<AppInfo> mAppInfos) {
         this.mContext = mContext;
         this.mAppInfos = mAppInfos;
+        packageManager = mContext.getPackageManager();
         mLayoutInflater = LayoutInflater.from(mContext);
     }
 
@@ -43,7 +45,6 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
     public void onBindViewHolder(final AppViewHolder holder, final int position) {
         final AppInfo appInfo = mAppInfos.get(position);
 
-//        renderItemLockStatus(holder.sAppSwitch, appInfo, position);
         renderItemView(holder, appInfo, position);
     }
 
@@ -58,7 +59,11 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
         final String appName = appInfo.getAppName();
 
         holder.sAppName.setText(appName);
-        holder.sAppIcon.setImageBitmap(appInfo.getAppDrawable());
+        ApplicationInfo applicationInfo = appInfo.getApplicationInfo();
+        if (null != applicationInfo) {
+            holder.sAppIcon.setImageDrawable(applicationInfo.loadIcon(packageManager));
+        }
+
         holder.sAppSwitch.setChecked(appInfo.isLocked());
         holder.sAppSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,32 +76,6 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
         });
     }
 
-    private void renderItemLockStatus(CheckBox checkBox, AppInfo info, int position) {
-        List<AppInfo> lockedPackNames = SpUtil.getInstance().getLockedPackNames();
-        if (BuildConfig.DEBUG)
-            Log.d("AppAdapter", "lockedPackNames size-> " + lockedPackNames.size());
-
-        if (AndroidTools.isListValidate(lockedPackNames)) {
-            for (int i = 0; i < lockedPackNames.size(); i++) {
-                AppInfo appInfo = lockedPackNames.get(i);
-                if (appInfo == null) {
-                    Log.d("AppAdapter", "appInfo为空");
-                    return;
-                }
-
-                String packageName = appInfo.getPackageName();
-                Log.d("AppAdapter", "packageName-->" + packageName);
-                if (packageName.equals(info.getPackageName())) {
-                    info.setLocked(true);
-//                    checkBox.setChecked(true);
-                } else {
-                    info.setLocked(false);
-//                    checkBox.setChecked(false);
-                }
-            }
-        }
-    }
-
     /**
      * 更改 ItemView 中 CheckBox 的状态
      *
@@ -107,10 +86,12 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
     private void changeItemLockStatus(CheckBox checkBox, AppInfo info, int position) {
         if (checkBox.isChecked()) {
             info.setLocked(true);
-            SpUtil.getInstance().saveLockedPackNameItem(info);
+//            SpUtil.getInstance(mContext).saveLockedPackNameItem(info);
+            SpUtil.getInstance(mContext).savePackName(info.getPackageName());
         } else {
             info.setLocked(false);
-            SpUtil.getInstance().removeLockedPackNameItem(info);
+//            SpUtil.getInstance(mContext).removeLockedPackNameItem(info);
+            SpUtil.getInstance(mContext).delPackName(info.getPackageName());
         }
         notifyItemChanged(position);
     }

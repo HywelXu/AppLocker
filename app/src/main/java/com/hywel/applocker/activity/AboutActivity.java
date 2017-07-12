@@ -4,49 +4,51 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hywel.applocker.R;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-public class AboutActivity extends AppCompatActivity {
-    @BindView(R.id.password_panel_guide)
-    TextView mPasswordGuideTV;
-    @BindView(R.id.iv_icon_setting)
-    ImageView mIconSettingIV;
-    @BindView(R.id.password_panel_guide_layout)
-    LinearLayout mPasswordGuideLayout;
+public class AboutActivity extends BaseActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
-        ButterKnife.bind(this);
+    protected void setRightTitleBar() {
+        mRightImageView.setImageResource(android.R.drawable.ic_menu_share);
+        mRightImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                simpleShare(getText(R.string.setting_panel_all_about_me_share_title).toString(), getText(R.string.setting_panel_all_about_me_share_text).toString());
+            }
+        });
+    }
 
-        startHeaderAnim();
+
+    @Override
+    protected void makeActions() {
+
+    }
+
+    @Override
+    protected void renderData() {
+
+    }
+
+    @Override
+    protected void renderView(Bundle savedInstanceState) {
+        injectView();
+    }
+
+    @Override
+    public int getInjectLayoutId() {
+        return R.layout.activity_about;
     }
 
     /**
-     * 布局头部的动画
+     * 简易分享
+     *
+     * @param title 主题
+     * @param text  内容
      */
-    private void startHeaderAnim() {
-        mIconSettingIV.animate().rotationY(360f).setDuration(1000).setInterpolator(new OvershootInterpolator()).start();
-        mPasswordGuideTV.animate().rotationX(360f).setDuration(1000).setInterpolator(new AccelerateInterpolator()).start();
-    }
-
-    public void gotoShare(View view) {
-        simpleShare(getText(R.string.setting_panel_all_about_me_share_title).toString(), getText(R.string.setting_panel_all_about_me_share_text).toString());
-    }
-
     private void simpleShare(String title, String text) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
@@ -73,7 +75,4 @@ public class AboutActivity extends AppCompatActivity {
         }
     }
 
-    public void onBackArrowClicked(View view) {
-        onBackPressed();
-    }
 }

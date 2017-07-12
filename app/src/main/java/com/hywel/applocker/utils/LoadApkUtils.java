@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -63,10 +61,71 @@ public class LoadApkUtils {
     }
 
     /**
+     * 获取手机所有的应用
+     *
+     * @return PackageInfo
+     */
+    public static List<PackageInfo> getAllApplications(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        // 获取所有的安装程序
+        return packageManager.getInstalledPackages(0);
+    }
+
+    /**
+     * 获取 sp 中所有应用的包名
+     *
+     * @param context
+     * @return
+     */
+    public static List<String> getLockedAppPackNames(Context context) {
+        List<String> allAppPackNames = new ArrayList<>();
+
+        List<AppInfo> lockedPackNames = SpUtil.getInstance(context).getLockedPackNames();
+        for (int i = 0; i < lockedPackNames.size(); i++) {
+            allAppPackNames.add(lockedPackNames.get(i).getPackageName());
+        }
+        return allAppPackNames;
+    }
+
+    /**
+     * 获取手机所有的应用
+     *
+     * @return AppInfo
+     */
+    public static List<AppInfo> getAllApps(Context context) {
+        List<AppInfo> appInfos = new ArrayList<>();
+        PackageManager packageManager = context.getPackageManager();
+        List<PackageInfo> applications = packageManager.getInstalledPackages(0);
+        for (PackageInfo info : applications) {
+            AppInfo appInfo = new AppInfo();
+
+            // 获取到程序的包名
+            String packageName = info.packageName;
+            // 获取到版本号
+            String versionName = info.versionName;
+
+            ApplicationInfo applicationInfo = info.applicationInfo;
+            // 获取程序名
+            String appName = applicationInfo.loadLabel(packageManager).toString();
+            // 获取到程序图标
+            Drawable icon = applicationInfo.loadIcon(packageManager);
+//                int uid = applicationInfo.uid;
+
+            appInfo.setAppName(appName);
+//                appInfo.setAppDrawable(((BitmapDrawable) icon).getBitmap());
+            appInfo.setApplicationInfo(applicationInfo);
+            appInfo.setPackageName(packageName);
+            appInfo.setVersionName(versionName);
+            appInfos.add(appInfo);
+        }
+        return appInfos;
+    }
+
+    /**
      * 获取所有用户安装的应用
      */
-    public static List<PackageInfo> getAllUserApps(Context context) {
-        List<PackageInfo> apps = new ArrayList<>();
+    public static ArrayList<PackageInfo> getAllUserApps(Context context) {
+        ArrayList<PackageInfo> apps = new ArrayList<>();
         PackageManager packageManager = context.getPackageManager();
         List<PackageInfo> applications = packageManager.getInstalledPackages(0);
         for (PackageInfo info : applications) {
@@ -80,8 +139,8 @@ public class LoadApkUtils {
     /**
      * 获取所有用户安装应用的应用信息
      */
-    public static List<AppInfo> getAllUserAppInfos(Context context) {
-        List<AppInfo> appInfos = new ArrayList<>();
+    public static ArrayList<AppInfo> getAllUserAppInfos(Context context) {
+        ArrayList<AppInfo> appInfos = new ArrayList<>();
         PackageManager packageManager = context.getPackageManager();
         List<PackageInfo> applications = packageManager.getInstalledPackages(0);
         for (PackageInfo info : applications) {
@@ -101,8 +160,8 @@ public class LoadApkUtils {
 //                int uid = applicationInfo.uid;
 
                 appInfo.setAppName(appName);
-                Bitmap bitmapIcon = ((BitmapDrawable) icon).getBitmap();
-                appInfo.setAppDrawable(bitmapIcon);
+//                appInfo.setAppDrawable(((BitmapDrawable) icon).getBitmap());
+                appInfo.setApplicationInfo(applicationInfo);
                 appInfo.setPackageName(packageName);
                 appInfo.setVersionName(versionName);
                 appInfos.add(appInfo);
@@ -111,11 +170,22 @@ public class LoadApkUtils {
         return appInfos;
     }
 
+
+    public static List<String> getAllAppPackNames(Context context) {
+        List<String> allAppPackNames = new ArrayList<>();
+        List<AppInfo> allSysAppInfos = getAllApps(context);
+        if (!AndroidTools.isListValidate(allSysAppInfos)) return null;
+        for (AppInfo info : allSysAppInfos) {
+            allAppPackNames.add(info.getPackageName());
+        }
+        return allAppPackNames;
+    }
+
     /**
      * 获取所有系统自带应用的应用信息
      */
-    public static List<AppInfo> getAllSysAppInfos(Context context) {
-        List<AppInfo> appInfos = new ArrayList<>();
+    public static ArrayList<AppInfo> getAllSysAppInfos(Context context) {
+        ArrayList<AppInfo> appInfos = new ArrayList<>();
         PackageManager packageManager = context.getPackageManager();
         List<PackageInfo> applications = packageManager.getInstalledPackages(0);
         for (PackageInfo info : applications) {
@@ -135,8 +205,8 @@ public class LoadApkUtils {
 //                int uid = applicationInfo.uid;
 
                 appInfo.setAppName(appName);
-                Bitmap bitmapIcon = ((BitmapDrawable) icon).getBitmap();
-                appInfo.setAppDrawable(bitmapIcon);
+//                appInfo.setAppDrawable(((BitmapDrawable) icon).getBitmap());
+                appInfo.setApplicationInfo(applicationInfo);
                 appInfo.setPackageName(packageName);
                 appInfo.setVersionName(versionName);
                 appInfos.add(appInfo);
@@ -148,8 +218,8 @@ public class LoadApkUtils {
     /**
      * 获取所有系统自带应用
      */
-    public static List<PackageInfo> getAllSysApps(Context context) {
-        List<PackageInfo> apps = new ArrayList<>();
+    public static ArrayList<PackageInfo> getAllSysApps(Context context) {
+        ArrayList<PackageInfo> apps = new ArrayList<>();
         PackageManager packageManager = context.getPackageManager();
         List<PackageInfo> applications = packageManager.getInstalledPackages(0);
         for (PackageInfo info : applications) {

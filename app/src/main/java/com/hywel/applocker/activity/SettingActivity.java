@@ -2,49 +2,51 @@ package com.hywel.applocker.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.animation.OvershootInterpolator;
 import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hywel.applocker.R;
+import com.hywel.applocker.utils.SpUtil;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+public class SettingActivity extends BaseActivity {
 
-public class SettingActivity extends AppCompatActivity {
-    @BindView(R.id.setting_panel_guide_layout)
-    LinearLayout mSettingGuideLayout;
-    @BindView(R.id.setting_panel_guide)
-    TextView mSettingGuideTV;
-    @BindView(R.id.lock_tip)
-    TextView mLockTipTV;
-    @BindView(R.id.iv_icon_setting)
-    ImageView mIconSettingIV;
-    @BindView(R.id.switch_compat)
-    CheckBox mSwitchOperator;
-    @BindView(R.id.btn_change_pwd)
-    TextView mChangePwdTV;
-    @BindView(R.id.about_me)
-    TextView mAboutTV;
-
+    private TextView mLockTipTV;
+    private TextView mChangePwdTV;
+    private TextView mAboutTV;
+    private CheckBox mSwitchOperator;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
-
-        ButterKnife.bind(this);
-        setListener();
-        startBackAnim();
+    protected void setRightTitleBar() {
+        mRightImageView.setImageDrawable(null);
     }
 
-    private void startBackAnim() {
-        mIconSettingIV.animate().rotationY(360f).setDuration(3000).setInterpolator(new OvershootInterpolator()).start();
-        mSettingGuideTV.animate().rotationX(360f).setDuration(3000).start();
+    @Override
+    protected void makeActions() {
+        setListener();
+    }
+
+    @Override
+    protected void renderData() {
+
+    }
+
+    @Override
+    protected void renderView(Bundle savedInstanceState) {
+        injectView();
+        mLockTipTV = (TextView) findViewById(R.id.lock_text);
+        mSwitchOperator = (CheckBox) findViewById(R.id.switch_compat);
+        mChangePwdTV = (TextView) findViewById(R.id.change_pwd);
+        mAboutTV = (TextView) findViewById(R.id.about_me);
+        boolean lockerOpen = SpUtil.getInstance(this).isLockerOpen();
+        mSwitchOperator.setChecked(lockerOpen);
+        mPswPanelHeader.setBackgroundResource(R.drawable.shape_password_panel_header_settinglayout);
+        mPswPanelText.setText(getText(R.string.setting_panel_all_apps_to_lock_tip));
+    }
+
+    @Override
+    public int getInjectLayoutId() {
+        return R.layout.activity_setting;
     }
 
     private void setListener() {
@@ -71,12 +73,16 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(SettingActivity.this, AboutActivity.class));
+                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_from_left);
             }
         });
 
     }
 
-    public void onBackArrowClicked(View view) {
-        onBackPressed();
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SpUtil.getInstance(this).saveLockerIsOpen(mSwitchOperator.isChecked());
     }
+
 }
