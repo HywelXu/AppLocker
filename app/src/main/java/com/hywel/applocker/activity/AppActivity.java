@@ -20,6 +20,7 @@ import com.hywel.applocker.R;
 import com.hywel.applocker.fragment.SysAppFragment;
 import com.hywel.applocker.fragment.UserAppFragment;
 import com.hywel.applocker.model.AppInfo;
+import com.hywel.applocker.service.LockService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public class AppActivity extends BaseActivity {
 
     @Override
     protected void makeActions() {
-
+        startService(new Intent(AppActivity.this, LockService.class));
     }
 
     @Override

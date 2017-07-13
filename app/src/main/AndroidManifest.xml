@@ -26,8 +26,8 @@
         <activity android:name=".activity.SettingActivity" />
         <activity android:name=".activity.AboutActivity" />
 
-        <service android:name=".service.FindApkService"></service>
-
+        <service android:name=".service.FindApkService" />
+        <service android:name=".service.LockService" />
     </application>
 
 </manifest>

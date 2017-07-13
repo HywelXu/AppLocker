@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hywel.applocker.LockerApplication;
 import com.hywel.applocker.R;
 
 /**
@@ -36,12 +37,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+        LockerApplication.getInstance().doForCreate(this);
 
         initBaseSelfView();
         renderView(savedInstanceState);
         initHeader();
         renderData();
-        makeActions();
     }
 
     private void initBaseSelfView() {
@@ -123,13 +124,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        makeActions();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 //        if (isFirstPerformAnim)
-            makeHeaderAnimation();
+        makeHeaderAnimation();
     }
 
     /**
@@ -150,6 +152,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LockerApplication.getInstance().doForFinish(this);
     }
 
     public void onBackArrowClicked() {
@@ -165,4 +168,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    public final void clear() {
+        super.finish();
+    }
+
 }
