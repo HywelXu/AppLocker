@@ -21,9 +21,9 @@
 
             <ImageView
                 android:id="@+id/iv_icon"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@mipmap/czym" />
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@mipmap/avatar_me" />
 
             <TextView
                 android:id="@+id/password_panel_text"
@@ -32,7 +32,17 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
                 android:gravity="center_horizontal"
-                android:text="@string/app_name"
+                android:text="@string/avatar_name"
+                android:textColor="@color/colorWhite" />
+
+            <TextView
+                android:id="@+id/password_panel_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="center_horizontal"
+                android:text="@string/avatar_info"
                 android:textColor="@color/colorWhite" />
         </LinearLayout>
 

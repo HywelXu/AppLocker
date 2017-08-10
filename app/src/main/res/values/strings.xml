@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">AppLocker</string>
+    <string name="avatar_name">HywelXu</string>
+    <string name="avatar_info">总有秘密在心底，慢慢绽放出甜蜜。</string>
     <!-- ================设置手势密码================ -->
     <string name="string_gustlockset_title">设置手势密码</string>
     <string name="string_guestset_typefirst">绘制手势图案</string>
