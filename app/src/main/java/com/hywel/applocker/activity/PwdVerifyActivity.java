@@ -1,35 +1,50 @@
 package com.hywel.applocker.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hywel.applocker.R;
+import com.hywel.applocker.service.AppConstants;
 import com.hywel.applocker.service.FindApkService;
+import com.hywel.applocker.utils.FancyToastUtils;
 import com.hywel.applocker.utils.SpUtil;
 import com.hywel.applocker.widget.GestureLockView.GestureLockCallback;
 import com.hywel.applocker.widget.GestureLockView.GestureLockIndicator;
 import com.hywel.applocker.widget.PasswordPanel;
 
+import butterknife.BindView;
+
 public class MainActivity extends BaseActivity implements GestureLockCallback {
+    @BindView(R.id.activity_gustlockset_message)
     TextView mMessageTextView;
+    @BindView(R.id.password_panel)
     PasswordPanel passwordPanel;
     /**
      * 手势密码轨迹图案提示控件
      */
+    @BindView(R.id.activity_gustlockset_indicator)
     GestureLockIndicator guestIndictor;
     private Intent serviceIntent;
 
     @Override
-    protected void setRightTitleBar() {
-        mRightImageView.setImageDrawable(null);
+    protected int setRightTitleBarIcon() {
+        return -1;
+    }
+
+    @Override
+    protected void onRightMenuClicked(View view) {
     }
 
     @Override
     protected void makeActions() {
         passwordPanel.setxCallback(this);
+        registerPwdLockReceiver();
     }
 
     @Override
@@ -39,16 +54,10 @@ public class MainActivity extends BaseActivity implements GestureLockCallback {
 
     @Override
     protected void renderView(Bundle savedInstanceState) {
-        injectView();
-        mMessageTextView = (TextView) findViewById(R.id.activity_gustlockset_message);
-        passwordPanel = (PasswordPanel) findViewById(R.id.password_panel);
-        guestIndictor = (GestureLockIndicator) findViewById(R.id.activity_gustlockset_indicator);
-        mPswPanelHeader.setBackgroundResource(R.drawable.shape_password_panel_header_mainlayout);
-        mPswPanelText.setText(getText(R.string.password_panel_remind_to_lock_tip));
     }
 
     @Override
-    public int getInjectLayoutId() {
+    public int getLayoutId() {
         return R.layout.activity_main;
     }
 
@@ -58,14 +67,16 @@ public class MainActivity extends BaseActivity implements GestureLockCallback {
     }
 
     private void stopApkService() {
-        if (null != serviceIntent)
+        if (null != serviceIntent) {
             stopService(serviceIntent);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         stopApkService();
+        unregisterPwdLockReceiver();
     }
 
     /**
@@ -75,8 +86,8 @@ public class MainActivity extends BaseActivity implements GestureLockCallback {
         passwordPanel.setVerify(false);
         passwordPanel.clearMethod();
         guestIndictor.clearMethod();
-        mPswPanelText.setText(getString(R.string.string_guestset_typefirst));
-        mPswPanelText.setTextColor(getResources().getColor(R.color.heise));
+        mHTitleHeaderView.setPswPanelText(getString(R.string.string_guestset_typefirst));
+        mHTitleHeaderView.setPswPanelTextColor(getResources().getColor(R.color.heise));
     }
 
     @Override
@@ -93,13 +104,13 @@ public class MainActivity extends BaseActivity implements GestureLockCallback {
 //                startAnimationMethod();// 调用执行动画的方法
                 break;
             case GestureLockCallback.TWICE_LINE_SAME:
-                mPswPanelText.setTextColor(getResources().getColor(R.color.colorWhite));
-                mPswPanelText.animate().rotationY(360).setDuration(500).start();
-                mIconImageView.animate().rotationY(360).setDuration(500).start();
-                boolean firstIn = SpUtil.getInstance(this).isFirstIn();
+                mHTitleHeaderView.setPswPanelTextColor(getResources().getColor(R.color.colorWhite));
+                mHTitleHeaderView.getPswPanelText().animate().rotationY(360).setDuration(500).start();
+                mHTitleHeaderView.getIconImageView().animate().rotationY(360).setDuration(500).start();
+                boolean firstIn = SpUtil.getInstance().isFirstIn();
                 String tip = firstIn ? "设置成功" : "解锁成功";
-                mPswPanelText.setText(tip);
-                Toast.makeText(this, tip, Toast.LENGTH_LONG).show();
+                mHTitleHeaderView.setPswPanelText(tip);
+                FancyToastUtils.showSuccessToast(tip);
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -120,4 +131,26 @@ public class MainActivity extends BaseActivity implements GestureLockCallback {
         }
     }
 
+    private PwdLockReceiver mPwdLockReceiver;
+
+    private void registerPwdLockReceiver() {
+        mPwdLockReceiver = new PwdLockReceiver();
+        IntentFilter vIntentFilter = new IntentFilter(AppConstants.PWD_LOCK_BROAD_ACTION);
+        registerReceiver(mPwdLockReceiver, vIntentFilter);
+    }
+
+    private void unregisterPwdLockReceiver() {
+        if (mPwdLockReceiver != null) {
+            unregisterReceiver(mPwdLockReceiver);
+        }
+    }
+
+
+    public class PwdLockReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
+    }
 }

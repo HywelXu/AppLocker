@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tabNameId"
+    android:layout_width="118dp"
+    android:layout_height="@dimen/q29dp"
+    android:layout_gravity="center"
+    android:background="@drawable/sell_selector"
+    android:textSize="@dimen/q13sp"
+    android:gravity="center"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:textColor="@color/sell_textcolor" />
