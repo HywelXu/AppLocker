@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion rootProject.ext.def_compileSdkVersion
+    buildToolsVersion rootProject.ext.def_buildToolsVersion
     defaultConfig {
         applicationId "com.hywel.applocker"
-        minSdkVersion 15
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion rootProject.ext.def_minSdkVersion
+        targetSdkVersion rootProject.ext.def_targetSdkVersion
+        versionCode rootProject.ext.def_versionCode
+        versionName rootProject.ext.def_versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -17,17 +17,29 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    testImplementation 'junit:junit:4.12'
     // Butter Knife
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.0.0'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
-    testCompile 'junit:junit:4.12'
-    compile 'com.google.code.gson:gson:2.8.1'
+    // code generator for view
+    implementation "com.jakewharton:butterknife:$rootProject.butterKnifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterKnifeVersion"
+
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation "com.android.support:appcompat-v7:$def_supportLibraryVersion"
+    implementation "com.android.support:support-v4:$def_supportLibraryVersion"
+    implementation "com.android.support:design:$def_supportLibraryVersion"
+    implementation "com.android.support:recyclerview-v7:$def_supportLibraryVersion"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.44'
+    implementation 'com.sdsmdg.tastytoast:tastytoast:0.1.1'
 
 }

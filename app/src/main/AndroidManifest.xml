@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.hywel.applocker">
 
     <application
@@ -9,10 +10,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppBaseTheme">
+        android:theme="@style/AppBaseTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".activity.MainActivity"
-            android:launchMode="singleTask" />
+            android:name=".activity.PwdVerifyActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.SplashActivity"
             android:screenOrientation="portrait">
@@ -22,12 +27,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AppActivity" />
-        <activity android:name=".activity.SettingActivity" />
-        <activity android:name=".activity.AboutActivity" />
+
+        <activity
+            android:name=".activity.AppActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+
+        </activity>
+
+        <activity
+            android:name=".activity.SettingActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.AboutActivity"
+            android:screenOrientation="portrait" />
 
         <service android:name=".service.FindApkService" />
         <service android:name=".service.LockService" />
     </application>
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
 
 </manifest>

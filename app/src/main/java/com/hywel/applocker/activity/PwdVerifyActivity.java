@@ -1,9 +1,7 @@
 package com.hywel.applocker.activity;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -11,7 +9,7 @@ import android.widget.TextView;
 
 import com.hywel.applocker.R;
 import com.hywel.applocker.service.AppConstants;
-import com.hywel.applocker.service.FindApkService;
+import com.hywel.applocker.utils.BusinessHelper;
 import com.hywel.applocker.utils.FancyToastUtils;
 import com.hywel.applocker.utils.SpUtil;
 import com.hywel.applocker.widget.GestureLockView.GestureLockCallback;
@@ -20,7 +18,7 @@ import com.hywel.applocker.widget.PasswordPanel;
 
 import butterknife.BindView;
 
-public class MainActivity extends BaseActivity implements GestureLockCallback {
+public class PwdVerifyActivity extends BaseActivity implements GestureLockCallback {
     @BindView(R.id.activity_gustlockset_message)
     TextView mMessageTextView;
     @BindView(R.id.password_panel)
@@ -30,7 +28,8 @@ public class MainActivity extends BaseActivity implements GestureLockCallback {
      */
     @BindView(R.id.activity_gustlockset_indicator)
     GestureLockIndicator guestIndictor;
-    private Intent serviceIntent;
+    private String mPackageName;
+    private boolean mUnlockFromOthers = false;
 
     @Override
     protected int setRightTitleBarIcon() {
@@ -41,15 +40,33 @@ public class MainActivity extends BaseActivity implements GestureLockCallback {
     protected void onRightMenuClicked(View view) {
     }
 
+    /**
+     * 执行解锁
+     *
+     * @param mContext     Context
+     * @param pPackageName 目标 APP 的包名
+     * @param pFrom        是否从其他 APP 而来
+     */
+    public static void performPwdVerify(Context mContext, String pPackageName, boolean pFrom) {
+        Intent intent = new Intent(mContext, PwdVerifyActivity.class);
+        intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, pPackageName);
+        intent.putExtra(AppConstants.LOCK_FROM, pFrom);
+        mContext.startActivity(intent);
+    }
+
     @Override
     protected void makeActions() {
         passwordPanel.setxCallback(this);
-        registerPwdLockReceiver();
+
+        Intent vIntent = getIntent();
+        if (vIntent != null) {
+            mPackageName = vIntent.getStringExtra(AppConstants.LOCK_PACKAGE_NAME);
+            mUnlockFromOthers = vIntent.getBooleanExtra(AppConstants.LOCK_FROM, false);
+        }
     }
 
     @Override
     protected void renderData() {
-        startApkService();
     }
 
     @Override
@@ -61,23 +78,6 @@ public class MainActivity extends BaseActivity implements GestureLockCallback {
         return R.layout.activity_main;
     }
 
-    private void startApkService() {
-        serviceIntent = new Intent(this, FindApkService.class);
-        startService(serviceIntent);
-    }
-
-    private void stopApkService() {
-        if (null != serviceIntent) {
-            stopService(serviceIntent);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopApkService();
-        unregisterPwdLockReceiver();
-    }
 
     /**
      * 重新设置手势密码的方法
@@ -92,21 +92,25 @@ public class MainActivity extends BaseActivity implements GestureLockCallback {
 
     @Override
     public void onLockCallback(int type) {
+
         switch (type) {
             case GestureLockCallback.POINT_LENGTH_SHORT:
                 mMessageTextView.setText(getString(R.string.string_guestset_short));
                 mMessageTextView.setTextColor(getResources().getColor(R.color.themecolor3));
 //                startAnimationMethod();// 调用执行动画的方法
                 break;
+
             case GestureLockCallback.TWICE_NOT_SAME:
                 mMessageTextView.setText(getString(R.string.string_guestset_notsame));
                 mMessageTextView.setTextColor(getResources().getColor(R.color.themecolor3));
 //                startAnimationMethod();// 调用执行动画的方法
                 break;
+
             case GestureLockCallback.TWICE_LINE_SAME:
                 mHTitleHeaderView.setPswPanelTextColor(getResources().getColor(R.color.colorWhite));
                 mHTitleHeaderView.getPswPanelText().animate().rotationY(360).setDuration(500).start();
                 mHTitleHeaderView.getIconImageView().animate().rotationY(360).setDuration(500).start();
+
                 boolean firstIn = SpUtil.getInstance().isFirstIn();
                 String tip = firstIn ? "设置成功" : "解锁成功";
                 mHTitleHeaderView.setPswPanelText(tip);
@@ -115,42 +119,28 @@ public class MainActivity extends BaseActivity implements GestureLockCallback {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        startActivity(new Intent(MainActivity.this, AppActivity.class));
-                        finish();
+                        if (!mUnlockFromOthers) {
+                            finish();
+                        } else {
+                            FancyToastUtils.showSuccessToast(mPackageName);
+                            BusinessHelper.getInstance().sendPwdLockReceiver(mPackageName);
+                            finish();
+                        }
                     }
                 }, 500);
                 break;
+
             case GestureLockCallback.FIRST_LINE_OVER:
                 guestIndictor.setSelectedMethod(passwordPanel.getHaschoosed()
                         .toString());
                 mMessageTextView.setText(getString(R.string.string_guestset_typesecond));
                 mMessageTextView.setTextColor(getResources().getColor(R.color.colorWhite));
                 break;
+
             default:
                 break;
         }
     }
 
-    private PwdLockReceiver mPwdLockReceiver;
 
-    private void registerPwdLockReceiver() {
-        mPwdLockReceiver = new PwdLockReceiver();
-        IntentFilter vIntentFilter = new IntentFilter(AppConstants.PWD_LOCK_BROAD_ACTION);
-        registerReceiver(mPwdLockReceiver, vIntentFilter);
-    }
-
-    private void unregisterPwdLockReceiver() {
-        if (mPwdLockReceiver != null) {
-            unregisterReceiver(mPwdLockReceiver);
-        }
-    }
-
-
-    public class PwdLockReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-        }
-    }
 }

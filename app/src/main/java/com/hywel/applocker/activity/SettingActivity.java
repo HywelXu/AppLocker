@@ -1,24 +1,35 @@
 package com.hywel.applocker.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.hywel.applocker.R;
+import com.hywel.applocker.utils.BusinessHelper;
 import com.hywel.applocker.utils.SpUtil;
+
+import butterknife.BindView;
 
 public class SettingActivity extends BaseActivity {
 
-    private TextView mLockTipTV;
-    private TextView mChangePwdTV;
-    private TextView mAboutTV;
-    private CheckBox mSwitchOperator;
+    @BindView(R.id.lock_text)
+    TextView mLockTipTV;
+    @BindView(R.id.change_pwd)
+    TextView mChangePwdTV;
+    @BindView(R.id.about_me)
+    TextView mAboutTV;
+    @BindView(R.id.switch_compat)
+    CheckBox mSwitchOperator;
 
     @Override
-    protected void setRightTitleBar() {
-        mRightImageView.setImageDrawable(null);
+    protected int setRightTitleBarIcon() {
+        return -1;
+    }
+
+    @Override
+    protected void onRightMenuClicked(View view) {
+
     }
 
     @Override
@@ -33,19 +44,12 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     protected void renderView(Bundle savedInstanceState) {
-        injectView();
-        mLockTipTV = (TextView) findViewById(R.id.lock_text);
-        mSwitchOperator = (CheckBox) findViewById(R.id.switch_compat);
-        mChangePwdTV = (TextView) findViewById(R.id.change_pwd);
-        mAboutTV = (TextView) findViewById(R.id.about_me);
-        boolean lockerOpen = SpUtil.getInstance(this).isLockerOpen();
+        boolean lockerOpen = SpUtil.getInstance().isLockerOpen();
         mSwitchOperator.setChecked(lockerOpen);
-        mPswPanelHeader.setBackgroundResource(R.drawable.shape_password_panel_header_settinglayout);
-        mPswPanelText.setText(getText(R.string.setting_panel_all_apps_to_lock_tip));
     }
 
     @Override
-    public int getInjectLayoutId() {
+    public int getLayoutId() {
         return R.layout.activity_setting;
     }
 
@@ -68,12 +72,10 @@ public class SettingActivity extends BaseActivity {
             }
         });
 
-
         mAboutTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SettingActivity.this, AboutActivity.class));
-                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_from_left);
+                BusinessHelper.getInstance().transferPageWithAnim(SettingActivity.this, AboutActivity.class, R.anim.slide_in_from_right, R.anim.slide_out_from_left);
             }
         });
 
@@ -82,7 +84,7 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        SpUtil.getInstance(this).saveLockerIsOpen(mSwitchOperator.isChecked());
+        SpUtil.getInstance().saveLockerIsOpen(mSwitchOperator.isChecked());
     }
 
 }

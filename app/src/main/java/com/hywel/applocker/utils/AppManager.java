@@ -1,8 +1,10 @@
-package com.house101.house101.utils;
+package com.hywel.applocker.utils;
 
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+
+import com.hywel.applocker.LockerApplication;
 
 import java.util.Stack;
 
@@ -10,6 +12,7 @@ import java.util.Stack;
 public class AppManager {
     private static Stack<Activity> activityStack;
     private static AppManager instance;
+    public static boolean flag = true;// 线程退出的标记
 
     private AppManager() {
     }
@@ -99,6 +102,28 @@ public class AppManager {
             }
         }
         activityStack.clear();
+    }
+
+    /**
+     * 结束当前页面，如果 APP 已经退出则初始化锁定应用的状态
+     *
+     * @param pActivity Activity
+     */
+    public void finishAndResetLockerState(Activity pActivity) {
+        if (pActivity != null) {
+            activityStack.remove(pActivity);
+            pActivity.finish();
+        }
+
+        if (isAppExit()) {
+            if (!flag) {
+                FancyToastUtils.showWarningToast("APP 已退出");
+                SpUtil.resetLockedPackageState();
+            } else {
+                FancyToastUtils.showWarningToast("APP 无界面");
+                LockerApplication.mLockedSimpleAppInfos = SpUtil.getInstance().getLockedPackNameList();
+            }
+        }
     }
 
     /**

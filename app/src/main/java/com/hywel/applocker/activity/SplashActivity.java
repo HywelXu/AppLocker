@@ -6,55 +6,61 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hywel.applocker.R;
+import com.hywel.applocker.utils.BusinessHelper;
 import com.hywel.applocker.utils.SpUtil;
 
+import butterknife.BindView;
+
 public class SplashActivity extends BaseActivity {
+    @BindView(R.id.image_splash)
     ImageView mSplashImageView;
+    @BindView(R.id.tv_appName)
     TextView mAppNameTV;
+    @BindView(R.id.tv_appDes)
     TextView mAppDesTV;
+
     private boolean lockerOpen;
     private boolean firstIn;
+    private Intent serviceIntent;
 
     @Override
-    protected void setRightTitleBar() {
-        mRightImageView.setImageDrawable(null);
+    protected int setRightTitleBarIcon() {
+        return -1;
+    }
+
+    @Override
+    protected void onRightMenuClicked(View view) {
+
     }
 
     @Override
     protected void makeActions() {
-
+        startSplashAnim();
     }
 
     @Override
     protected void renderData() {
-
+        BusinessHelper.getInstance().startApkService();
     }
 
     @Override
     protected void renderView(Bundle savedInstanceState) {
         hideHeader();
-        injectView();
-        initSelfView();
-        lockerOpen = SpUtil.getInstance(this).isLockerOpen();
-        firstIn = SpUtil.getInstance(this).isFirstIn();
-        startSplashAnim();
+        lockerOpen = SpUtil.getInstance().isLockerOpen();
+        firstIn = SpUtil.getInstance().isFirstIn();
     }
 
     @Override
-    public int getInjectLayoutId() {
+    public int getLayoutId() {
         return R.layout.activity_splash;
     }
 
-    private void initSelfView() {
-        mSplashImageView = (ImageView) findViewById(R.id.image_splash);
-        mAppNameTV = (TextView) findViewById(R.id.tv_appName);
-        mAppDesTV = (TextView) findViewById(R.id.tv_appDes);
-    }
 
     private void startSplashAnim() {
         ObjectAnimator iconAnimator = ObjectAnimator.ofFloat(mSplashImageView, "rotationY", 0f, 180f);
@@ -80,21 +86,7 @@ public class SplashActivity extends BaseActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
-//                        if (firstIn) {
-//                            startActivity(new Intent(SplashActivity.this, MainActivity.class));
-//                        } else {
-//                            if (lockerOpen) {
-//                                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-//                            } else {
-//                                startActivity(new Intent(SplashActivity.this, AppActivity.class));
-//                            }
-//                        }
-
-                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
-
-                        overridePendingTransition(R.anim.drop_in, R.anim.drop_out);
-                        finish();
+                        BusinessHelper.getInstance().transferPageThenFinish(SplashActivity.this, AppActivity.class);
                     }
                 }, 1000);
             }
@@ -109,6 +101,12 @@ public class SplashActivity extends BaseActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BusinessHelper.getInstance().stopApkService();
     }
 
     @Override

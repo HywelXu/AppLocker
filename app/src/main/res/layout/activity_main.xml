@@ -5,8 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.hywel.applocker.activity.MainActivity">
+    tools:context="com.hywel.applocker.activity.PwdVerifyActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+
+    <TextView
+        android:id="@+id/activity_gustlockset_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:text="@string/string_guestset_typefirst" />
 
     <com.hywel.applocker.widget.GestureLockView.GestureLockIndicator
         android:id="@+id/activity_gustlockset_indicator"
@@ -17,14 +30,6 @@
         android:visibility="gone"
         app:drawablenormal="@drawable/shap_guestindicator_ciclenormal"
         app:drawableselected="@drawable/shap_guestindicator_ciclepressed" />
-
-    <TextView
-        android:id="@+id/activity_gustlockset_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:text="@string/string_guestset_typefirst" />
 
     <com.hywel.applocker.widget.PasswordPanel
         android:id="@+id/password_panel"
@@ -37,4 +42,6 @@
         app:linecolorerror="@color/themecolor3"
         app:linecolornormal="@color/themecolor"
         app:linewidth="3dp" />
+    </LinearLayout>
+
 </LinearLayout>

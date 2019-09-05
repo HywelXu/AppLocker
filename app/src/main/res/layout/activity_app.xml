@@ -4,60 +4,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
     android:orientation="vertical"
     tools:context="com.hywel.applocker.activity.AppActivity">
 
 
-
-    <FrameLayout
+    <EditText
+        android:id="@+id/edit_search_tv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="45dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp"
+        android:background="@drawable/bg_frame_search_dark"
+        android:gravity="center"
+        android:hint="@string/app_search_hint"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:maxLines="1"
+        android:onClick="handleSearch"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="@color/colorBlack"
+        android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/edit_search_tv"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:background="@drawable/bg_frame_search"
-            android:drawablePadding="10dp"
-            android:gravity="center"
-            android:onClick="handleSearch"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="轻轻点击 搜索应用"
-            android:textColor="@color/colorBlack"
-            android:textSize="14sp" />
-
-
-        <SearchView
-            android:id="@+id/app_search_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/bg_frame_search"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:queryHint="搜索应用"
-            android:visibility="gone">
-
-        </SearchView>
-
-    </FrameLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_10"
+        android:background="@color/colorAppLayout"
+        android:contentDescription="@null"
+        android:visibility="gone" />
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
+        style="@style/TabLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/colorWhite"
-        app:tabIndicatorColor="@color/colorGray"
-        app:tabMode="fixed" />
-
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_10"
+        app:tabIndicatorColor="@color/colorAppLayout"
+        app:tabIndicatorHeight="0dp"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/qFFFFFF" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_apps"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="1dp">
 
     </android.support.v4.view.ViewPager>
 

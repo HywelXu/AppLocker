@@ -3,9 +3,9 @@ package com.hywel.applocker.adapter;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.hywel.applocker.R;
 import com.hywel.applocker.model.AppInfo;
+import com.hywel.applocker.model.SimpleAppInfo;
 import com.hywel.applocker.utils.SpUtil;
 
 import java.util.List;
@@ -44,7 +45,6 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
     @Override
     public void onBindViewHolder(final AppViewHolder holder, final int position) {
         final AppInfo appInfo = mAppInfos.get(position);
-
         renderItemView(holder, appInfo, position);
     }
 
@@ -64,16 +64,28 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
             holder.sAppIcon.setImageDrawable(applicationInfo.loadIcon(packageManager));
         }
 
+//        Drawable vAppIcon = appInfo.getAppIcon();
+//        if (vAppIcon != null) {
+//            holder.sAppIcon.setImageDrawable(vAppIcon);
+//        }
+
         holder.sAppSwitch.setChecked(appInfo.isLocked());
         holder.sAppSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("AppAdapter", "appName: " + appName + " isChecked: " + holder.sAppSwitch.isChecked());
-                Log.d("AppAdapter", "id: " + appInfo.getId());
-
                 changeItemLockStatus(holder.sAppSwitch, appInfo, position);
             }
         });
+
+        //高亮处理
+        boolean vHighLight = appInfo.isHighLight();
+        if (vHighLight) {
+            holder.app_list_item.setBackgroundResource(R.drawable.app_tab_bg);
+            holder.sAppName.setTextColor(mContext.getResources().getColor(R.color.colorAppLayout));
+        } else {
+            holder.app_list_item.setBackground(null);
+            holder.sAppName.setTextColor(mContext.getResources().getColor(R.color.colorBlack));
+        }
     }
 
     /**
@@ -86,12 +98,10 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
     private void changeItemLockStatus(CheckBox checkBox, AppInfo info, int position) {
         if (checkBox.isChecked()) {
             info.setLocked(true);
-//            SpUtil.getInstance(mContext).saveLockedPackNameItem(info);
-            SpUtil.getInstance(mContext).savePackName(info.getPackageName());
+            SpUtil.getInstance().saveLockedPackNameItem(SimpleAppInfo.buildSimpleAppInfo(info));
         } else {
             info.setLocked(false);
-//            SpUtil.getInstance(mContext).removeLockedPackNameItem(info);
-            SpUtil.getInstance(mContext).delPackName(info.getPackageName());
+            SpUtil.getInstance().removeLockedPackNameItem(SimpleAppInfo.buildSimpleAppInfo(info));
         }
         notifyItemChanged(position);
     }
@@ -108,12 +118,14 @@ public class AppAdapter extends Adapter<AppAdapter.AppViewHolder> {
         TextView sAppName;
         //应用上锁
         CheckBox sAppSwitch;
+        ConstraintLayout app_list_item;
 
         AppViewHolder(View itemView) {
             super(itemView);
             sAppIcon = (ImageView) itemView.findViewById(R.id.app_icon);
             sAppName = (TextView) itemView.findViewById(R.id.app_name);
             sAppSwitch = (CheckBox) itemView.findViewById(R.id.app_switch);
+            app_list_item = itemView.findViewById(R.id.app_list_item);
         }
 
     }

@@ -5,4 +5,7 @@
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="dp_15">15dp</dimen>
+    <dimen name="q29dp">29dp</dimen>
+    <dimen name="q13sp">13sp</dimen>
 </resources>

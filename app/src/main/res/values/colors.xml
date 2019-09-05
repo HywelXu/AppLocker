@@ -17,6 +17,7 @@
     <!-- App主题颜色 -->
     <color name="themecolor">#77BF00</color>
     <color name="themecolor2">#DE7927</color>
+    <color name="themecolor4">#DEA927</color>
     <color name="themecolor3">#FB5180</color>
     <!-- App主题背景颜色 -->
     <color name="themeback">#EBEBEB</color>
@@ -51,5 +52,8 @@
     <color name="line_color">#eaeaea</color>
     <color name="bg_white_normal">#ffffff</color>
     <color name="bg_white_selected">#f3f3f3</color>
+    <color name="qFFFFFF">#FFFFFF</color>
+    <color name="qe04153">#E04153</color>
+    <color name="qE5E5E5">#E5E5E5</color>
 
 </resources>

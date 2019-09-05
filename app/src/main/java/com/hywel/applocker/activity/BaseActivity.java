@@ -1,93 +1,123 @@
 package com.hywel.applocker.activity;
 
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.hywel.applocker.LockerApplication;
 import com.hywel.applocker.R;
+import com.hywel.applocker.utils.AppManager;
+import com.hywel.applocker.widget.HTitleHeaderView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by hywel on 2017/6/30.
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
-    //标题栏
-    ImageView mBackImageView;
-    ImageView mRightImageView;
-    FrameLayout mTitleBarLayout;
-
-    //导航头部
-    LinearLayout mPswPanelHeader;
-    ImageView mIconImageView;
-    TextView mPswPanelText;
+    @BindView(R.id.htitle_header_view)
+    HTitleHeaderView mHTitleHeaderView;
 
     //装载子布局的容器
+//    @BindView(R.id.view_container_layout)
     LinearLayout mViewContainer;
+
+    private Unbinder mUnbinder;
+    protected BaseActivity mBaseActivity;
 
 //    private boolean isFirstPerformAnim = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
-        LockerApplication.getInstance().doForCreate(this);
-
-        initBaseSelfView();
+        mBaseActivity = this;
+        setContentView(getBaseView());
+        mUnbinder = ButterKnife.bind(this);
+//        LockerApplication.getInstance().doForCreate(this);
+        AppManager.getAppManager().addActivity(this);
         renderView(savedInstanceState);
         initHeader();
         renderData();
     }
 
-    private void initBaseSelfView() {
-        //标题栏
-        mBackImageView = (ImageView) findViewById(R.id.iv_back);
-        mRightImageView = (ImageView) findViewById(R.id.iv_right);
-        mTitleBarLayout = (FrameLayout) findViewById(R.id.title_bar_layout);
-
-        //导航头部
-        mPswPanelHeader = (LinearLayout) findViewById(R.id.password_panel_header);
-        mIconImageView = (ImageView) findViewById(R.id.iv_icon);
-        mPswPanelText = (TextView) findViewById(R.id.password_panel_text);
-
-        //装载子布局的容器
-        mViewContainer = (LinearLayout) findViewById(R.id.view_container_layout);
+    @NonNull
+    private View getBaseView() {
+        View vView = getLayoutInflater().inflate(R.layout.activity_base, null);
+        View vInjectView = getLayoutInflater().inflate(getLayoutId(), null);
+        mViewContainer = vView.findViewById(R.id.view_container_layout);
+        mViewContainer.removeAllViews();
+        mViewContainer.addView(vInjectView);
+        return vView;
     }
 
     protected void hideHeader() {
-        mTitleBarLayout.setVisibility(View.GONE);
+        mHTitleHeaderView.hideTitleBarLayout();
     }
 
     protected void showHeader() {
-        mTitleBarLayout.setVisibility(View.VISIBLE);
+        mHTitleHeaderView.showTitleBarLayout();
     }
+
+    private int[] titleBgColors = new int[]{
+            R.drawable.shape_password_panel_header_mainlayout,
+            R.drawable.shape_password_panel_header_applayout,
+            R.drawable.shape_password_panel_header_settinglayout,
+            R.drawable.shape_password_panel_header_setting_about_me
+    };
+
+    private String[] titleTexts = new String[]{
+            "身份确认",
+            "加密应用",
+            "应用设置",
+            "关于"
+    };
+
+    private String[] classNames = new String[]{
+            "PwdVerifyActivity",
+            "AppActivity",
+            "SettingActivity",
+            "AboutActivity"
+    };
 
     private void initHeader() {
-//        showHeader();
-        setLeftTitleBar();
-        setRightTitleBar();
-    }
+        final int vSetRightTitleBarIcon = setRightTitleBarIcon();
+        if (vSetRightTitleBarIcon > 0) {
+            mHTitleHeaderView.showRightMenu();
+            mHTitleHeaderView.setRightMenuIcon(vSetRightTitleBarIcon);
+        } else {
+            mHTitleHeaderView.hideRightMenu();
+        }
 
-    protected abstract void setRightTitleBar();
-
-    private void setLeftTitleBar() {
-        mBackImageView.setOnClickListener(new View.OnClickListener() {
+        mHTitleHeaderView.setHTitleBarListener(new HTitleHeaderView.HTitleBarListener() {
             @Override
-            public void onClick(View v) {
+            public void onHTitleBackClicked(View view) {
                 onBackArrowClicked();
             }
+
+            @Override
+            public void onHTitleBarMenuClicked(View view) {
+                if (vSetRightTitleBarIcon > 0 && mHTitleHeaderView.isRightMenuVisible()) {
+                    onRightMenuClicked(view);
+                }
+            }
         });
-    }
 
-
-    protected void injectView() {
-        getLayoutInflater().inflate(getInjectLayoutId(), mViewContainer);
+        String vSimpleName = mBaseActivity.getClass().getSimpleName();
+        for (int vI = 0; vI < classNames.length; vI++) {
+            String vClassName = classNames[vI];
+            if (vClassName.equals(vSimpleName)) {
+                mHTitleHeaderView.setTitleBarLayoutBgColorRes(titleBgColors[vI]);
+                mHTitleHeaderView.setPswPanelText(titleTexts[vI]);
+            }
+        }
     }
 
     /**
@@ -102,8 +132,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 初始化视图
-     *
-     * @param savedInstanceState
      */
     protected abstract void renderView(Bundle savedInstanceState);
 
@@ -119,7 +147,21 @@ public abstract class BaseActivity extends AppCompatActivity {
      *
      * @return
      */
-    public abstract int getInjectLayoutId();
+    public abstract @LayoutRes
+    int getLayoutId();
+
+    /**
+     * 设置右侧菜单按钮图标
+     */
+    protected abstract @DrawableRes
+    int setRightTitleBarIcon();
+
+    /**
+     * 设置右侧按钮的点击事件
+     *
+     * @param view
+     */
+    protected abstract void onRightMenuClicked(View view);
 
     @Override
     protected void onStart() {
@@ -128,34 +170,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-//        if (isFirstPerformAnim)
-        makeHeaderAnimation();
-    }
-
-    /**
-     * 布局头部的动画
-     */
-    private void makeHeaderAnimation() {
-        mIconImageView.animate().rotationY(360f).setDuration(800).start();
-        mPswPanelText.animate().rotationX(360f).setDuration(800).start();
-//        isFirstPerformAnim = false;
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        LockerApplication.getInstance().doForFinish(this);
+        mUnbinder.unbind();
+//        LockerApplication.getInstance().doForFinish(this);
+        AppManager.getAppManager().finishAndResetLockerState(this);
     }
 
-    public void onBackArrowClicked() {
+    protected void onBackArrowClicked() {
         onBackPressed();
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_from_right);
     }

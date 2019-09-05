@@ -1,28 +1,63 @@
 package com.hywel.applocker.model;
 
 import android.content.pm.ApplicationInfo;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+
+import java.util.Objects;
 
 /**
  * Created by hywel on 2017/7/3.
+ * 仿照 PackageInfo 进行序列化
  */
 
-public class AppInfo implements Parcelable {
-    private Long id;
+public class AppInfo implements Parcelable, Comparable<AppInfo> {
+    private long id;
     private String appName;//应用名
     private String packageName;//包名
     private String versionName;//版本号
-    private String appIcon;//应用图标地址
+    private int appIcon;//应用图标地址
 
     //        private Bitmap appDrawable;//应用图标
     private ApplicationInfo applicationInfo;
     private boolean isLocked;//是否已锁
     private boolean isRecommedLocked;//是否推荐加锁
-    private boolean isSetUnLock;
+    private boolean isSetUnLock;//是否已校验解锁
+    private boolean isHighLight;//是否高光
+
+    @Override
+    public boolean equals(Object vpO) {
+        if (this == vpO) return true;
+        if (vpO == null || getClass() != vpO.getClass()) return false;
+        AppInfo vvAppInfo = (AppInfo) vpO;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return id == vvAppInfo.id &&
+                    appIcon == vvAppInfo.appIcon &&
+//                    isLocked == vvAppInfo.isLocked &&
+//                    isRecommedLocked == vvAppInfo.isRecommedLocked &&
+//                    isSetUnLock == vvAppInfo.isSetUnLock &&
+//                    isHighLight == vvAppInfo.isHighLight &&
+                    Objects.equals(appName, vvAppInfo.appName) &&
+                    Objects.equals(packageName, vvAppInfo.packageName) &&
+                    Objects.equals(versionName, vvAppInfo.versionName) &&
+                    Objects.equals(applicationInfo, vvAppInfo.applicationInfo);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return Objects.hash(id, appName, packageName, versionName, appIcon, applicationInfo, isLocked, isRecommedLocked, isSetUnLock, isHighLight);
+        }
+        return 0;
+    }
 
     public AppInfo() {
     }
+
 
     public ApplicationInfo getApplicationInfo() {
         return applicationInfo;
@@ -30,6 +65,42 @@ public class AppInfo implements Parcelable {
 
     public void setApplicationInfo(ApplicationInfo applicationInfo) {
         this.applicationInfo = applicationInfo;
+    }
+
+
+    protected AppInfo(Parcel in) {
+        id = in.readLong();
+        appName = in.readString();
+        packageName = in.readString();
+        versionName = in.readString();
+        appIcon = in.readInt();
+//        applicationInfo = in.readParcelable(ApplicationInfo.class.getClassLoader());
+        applicationInfo = ApplicationInfo.CREATOR.createFromParcel(in);
+
+        isLocked = in.readByte() != 0;
+        isRecommedLocked = in.readByte() != 0;
+        isSetUnLock = in.readByte() != 0;
+        isHighLight = in.readByte() != 0;
+    }
+
+    public static final Creator<AppInfo> CREATOR = new Creator<AppInfo>() {
+        @Override
+        public AppInfo createFromParcel(Parcel in) {
+            return new AppInfo(in);
+        }
+
+        @Override
+        public AppInfo[] newArray(int size) {
+            return new AppInfo[size];
+        }
+    };
+
+    public boolean isHighLight() {
+        return isHighLight;
+    }
+
+    public void setHighLight(boolean pHighLight) {
+        isHighLight = pHighLight;
     }
 
     public String getVersionName() {
@@ -49,11 +120,11 @@ public class AppInfo implements Parcelable {
         this.appName = appName;
     }
 
-    public String getAppIcon() {
+    public int getAppIcon() {
         return appIcon;
     }
 
-    public void setAppIcon(String appIcon) {
+    public void setAppIcon(int appIcon) {
         this.appIcon = appIcon;
     }
 
@@ -123,18 +194,6 @@ public class AppInfo implements Parcelable {
     }
 
 
-    public AppInfo(Long id, String appName, String packageName, String versionName, String appIcon,
-                   boolean isLocked, boolean isRecommedLocked, boolean isSetUnLock) {
-        this.id = id;
-        this.appName = appName;
-        this.packageName = packageName;
-        this.versionName = versionName;
-        this.appIcon = appIcon;
-        this.isLocked = isLocked;
-        this.isRecommedLocked = isRecommedLocked;
-        this.isSetUnLock = isSetUnLock;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -142,38 +201,26 @@ public class AppInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(this.id);
-        dest.writeString(this.appName);
-        dest.writeString(this.packageName);
-        dest.writeString(this.versionName);
-        dest.writeString(this.appIcon);
-        dest.writeParcelable(this.applicationInfo, flags);
-        dest.writeByte(this.isLocked ? (byte) 1 : (byte) 0);
-        dest.writeByte(this.isRecommedLocked ? (byte) 1 : (byte) 0);
-        dest.writeByte(this.isSetUnLock ? (byte) 1 : (byte) 0);
+        dest.writeLong(id);
+        dest.writeString(appName);
+        dest.writeString(packageName);
+        dest.writeString(versionName);
+        dest.writeInt(appIcon);
+        if (applicationInfo != null) {
+            dest.writeInt(1);
+            applicationInfo.writeToParcel(dest, flags);
+        } else {
+            dest.writeInt(0);
+        }
+        dest.writeByte((byte) (isLocked ? 1 : 0));
+        dest.writeByte((byte) (isRecommedLocked ? 1 : 0));
+        dest.writeByte((byte) (isSetUnLock ? 1 : 0));
+        dest.writeByte((byte) (isHighLight ? 1 : 0));
     }
 
-    protected AppInfo(Parcel in) {
-        this.id = (Long) in.readValue(Long.class.getClassLoader());
-        this.appName = in.readString();
-        this.packageName = in.readString();
-        this.versionName = in.readString();
-        this.appIcon = in.readString();
-        this.applicationInfo = in.readParcelable(ApplicationInfo.class.getClassLoader());
-        this.isLocked = in.readByte() != 0;
-        this.isRecommedLocked = in.readByte() != 0;
-        this.isSetUnLock = in.readByte() != 0;
+
+    @Override
+    public int compareTo(@NonNull AppInfo o) {
+        return packageName.compareTo(o.packageName);
     }
-
-    public static final Parcelable.Creator<AppInfo> CREATOR = new Parcelable.Creator<AppInfo>() {
-        @Override
-        public AppInfo createFromParcel(Parcel source) {
-            return new AppInfo(source);
-        }
-
-        @Override
-        public AppInfo[] newArray(int size) {
-            return new AppInfo[size];
-        }
-    };
 }

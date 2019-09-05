@@ -1,5 +1,6 @@
 package com.hywel.applocker.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -191,7 +192,7 @@ public class PasswordPanel extends ViewGroup {
         linePaint.setStyle(Paint.Style.STROKE);// 设置非填充
         linePaint.setStrokeWidth(lineWidth);
 
-        isFirstIn = SpUtil.getInstance(getContext()).isFirstIn();
+        isFirstIn = SpUtil.getInstance().isFirstIn();
     }
 
     /**
@@ -293,7 +294,7 @@ public class PasswordPanel extends ViewGroup {
                                         .onLockCallback(GestureLockCallback.FIRST_LINE_OVER);
                             }
                         } else {
-                            String passwordPanelVerifyCode = SpUtil.getInstance(getContext()).getPasswordPanelVerifyCode();
+                            String passwordPanelVerifyCode = SpUtil.getInstance().getPasswordPanelVerifyCode();
                             if (haschoosed.toString().equals(passwordPanelVerifyCode)) {
                                 if (xCallback != null) {
                                     clearMethod();
@@ -309,7 +310,7 @@ public class PasswordPanel extends ViewGroup {
                         }
                         Log.d("PasswordPanel", "isFirstIn-->" + isFirstIn);
                         if (isFirstIn) {
-                            SpUtil.getInstance(getContext()).savePasswordPanelVerifyCode(verifychoosed.toString());
+                            SpUtil.getInstance().savePasswordPanelVerifyCode(verifychoosed.toString());
 
                             if (haschoosed.toString().equals(
                                     verifychoosed.toString())) {
@@ -328,7 +329,7 @@ public class PasswordPanel extends ViewGroup {
                                 }
                             }
 
-                            SpUtil.getInstance(getContext()).saveIsFirstIn(false);
+                            SpUtil.getInstance().saveIsFirstIn(false);
                         }
                     }
                 }
@@ -379,6 +380,7 @@ public class PasswordPanel extends ViewGroup {
         }
     }
 
+    @SuppressLint("HandlerLeak")
     private Handler myHandler = new Handler() {
 
         @Override
@@ -398,6 +400,7 @@ public class PasswordPanel extends ViewGroup {
 
     };
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (isallowDrawLine) {

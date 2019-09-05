@@ -8,7 +8,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.hywel.applocker.model.AppInfo;
+import com.hywel.applocker.LockerApplication;
+import com.hywel.applocker.model.SimpleAppInfo;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,9 +20,8 @@ public class SpUtil {
     private static SpUtil mInstance;
     private static final String SP_NAME = "hywel_app_locker";
 
-    private Context mContext;
     private SharedPreferences mPref;
-    private List<AppInfo> lockedNames = new ArrayList<>();
+    private List<SimpleAppInfo> lockedNames = new ArrayList<>();
 
     //============sp key=====================
 
@@ -33,48 +33,18 @@ public class SpUtil {
     private static final String SP_KEY_LOCKED_PACKAGE_NAME = "locked_package_name";
 
     private SpUtil() {
+        mPref = LockerApplication.getInstance().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
     }
 
-    private SpUtil(Context mContext) {
-        this.mContext = mContext;
-        mPref = mContext.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-    }
-
-    public synchronized static SpUtil getInstance(Context context) {
+    public synchronized static SpUtil getInstance() {
         if (null == mInstance) {
             synchronized (SpUtil.class) {
                 if (null == mInstance) {
-                    mInstance = new SpUtil(context);
+                    mInstance = new SpUtil();
                 }
             }
         }
         return mInstance;
-    }
-
-    /**
-     * @param context
-     * @deprecated
-     */
-    //在AppBase里面初始化
-    public void init(Context context) {
-        if (mContext == null) {
-            mContext = context;
-        }
-        if (mPref == null) {
-//            mPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-            mPref = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        }
-        //=================================
-        //解决 Gson 异常
-        // <p>
-        // java.lang.SecurityException: Can't make method constructor accessible
-        //</p>
-        //=================================
-//        GsonBuilder builder = new GsonBuilder();
-//        builder.excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC);
-//        builder.excludeFieldsWithoutExposeAnnotation();
-//        Gson gson = builder.create();
-
     }
 
     public void putString(String key, String value) {
@@ -196,7 +166,7 @@ public class SpUtil {
      * @param packName 包名
      */
     public void savePackName(String packName) {
-        HashSet<String> packNames = getPackNames();
+        HashSet<String> packNames = getPackNameSet();
         Gson gson = new Gson();
         packNames.add(packName);
         putString(SP_KEY_LOCKED_PACK_NAME, gson.toJson(packNames));
@@ -208,7 +178,7 @@ public class SpUtil {
      * @param packName 包名
      */
     public void delPackName(String packName) {
-        HashSet<String> packNames = getPackNames();
+        HashSet<String> packNames = getPackNameSet();
         Gson gson = new Gson();
         if (packNames.contains(packName)) packNames.remove(packName);
         putString(SP_KEY_LOCKED_PACK_NAME, gson.toJson(packNames));
@@ -219,7 +189,7 @@ public class SpUtil {
      *
      * @return 所有 App 的包名set
      */
-    public HashSet<String> getPackNames() {
+    public HashSet<String> getPackNameSet() {
         HashSet<String> packNames = new HashSet<>();
         Gson gson = new Gson();
         String string = getString(SP_KEY_LOCKED_PACK_NAME);
@@ -236,25 +206,22 @@ public class SpUtil {
      *
      * @param dataValue 要上锁的应用包名
      */
-    public void saveLockedPackNameItem(AppInfo dataValue) {
-//        GsonBuilder builder = new GsonBuilder();
-//        builder.excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC);
-//        builder.excludeFieldsWithoutExposeAnnotation();
-//        Gson gson = builder.create();
+    public void saveLockedPackNameItem(SimpleAppInfo dataValue) {
         Gson gson = new Gson();
-
-        lockedNames = getLockedPackNames();
+        lockedNames = getLockedPackNameList();
         if (!AndroidTools.isListValidate(lockedNames)) {
             lockedNames = new ArrayList<>();
-        }
-        List<String> lockedAppPackNames = new ArrayList<>();
-        for (AppInfo info : lockedNames) {
-            lockedAppPackNames.add(info.getPackageName());
-        }
-        if (!lockedAppPackNames.contains(dataValue.getPackageName())) {
             lockedNames.add(dataValue);
+        } else {
+            int vContainTheItem = isContainTheItem(lockedNames, dataValue);
+            if (vContainTheItem < 0) {//之前不存在
+                lockedNames.add(dataValue);
+            }
         }
-        putString(SP_KEY_LOCKED_PACKAGE_NAME, gson.toJson(lockedNames));
+//        putString(SP_KEY_LOCKED_PACKAGE_NAME, gson.toJson(lockedNames));
+        Editor edit = mPref.edit();
+        edit.putString(SP_KEY_LOCKED_PACKAGE_NAME, gson.toJson(lockedNames));
+        edit.commit();
     }
 
     /**
@@ -262,23 +229,33 @@ public class SpUtil {
      *
      * @return 要上锁的应用包名集合
      */
-    public List<AppInfo> getLockedPackNames() {
-//        GsonBuilder builder = new GsonBuilder();
-//        builder.excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC);
-//        builder.excludeFieldsWithoutExposeAnnotation();
-//        Gson gson = builder.create();
+    public List<SimpleAppInfo> getLockedPackNameList() {
+        List<SimpleAppInfo> vAppInfos = new ArrayList<>();
         Gson gson = new Gson();
         try {
-            String lockedPackNameJson = getString(SP_KEY_LOCKED_PACKAGE_NAME, "");
-            if (!TextUtils.isEmpty(lockedPackNameJson)) {
-                lockedNames = gson.fromJson(lockedPackNameJson,
-                        new TypeToken<List<AppInfo>>() {
-                        }.getType());
-            }
+            String vJson = getString(SP_KEY_LOCKED_PACKAGE_NAME, "");
+            vAppInfos = gson.fromJson(vJson,
+                    new TypeToken<ArrayList<SimpleAppInfo>>() {
+                    }.getType());
+            Log.e("LockService", "vJson: " + vJson);
+//            Log.e("LockService", "vAppInfos: " + vAppInfos);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return lockedNames;
+        return vAppInfos;
+    }
+
+    /**
+     * 恢复锁定应用的锁定状态
+     */
+    public static void resetLockedPackageState() {
+        List<SimpleAppInfo> vLockedPackNameList = SpUtil.getInstance().getLockedPackNameList();
+        if (AndroidTools.isListValidate(vLockedPackNameList)) {
+            for (SimpleAppInfo vSimpleAppInfo : vLockedPackNameList) {
+                vSimpleAppInfo.setUnLock(false);
+            }
+            SpUtil.getInstance().saveRestAppInfos(vLockedPackNameList);
+        }
     }
 
     /**
@@ -286,15 +263,26 @@ public class SpUtil {
      *
      * @param value 不需要上锁的应用包名
      */
-    public void removeLockedPackNameItem(AppInfo value) {
-        lockedNames = getLockedPackNames();
-        List<String> lockedAppPackNames = new ArrayList<>();
-        for (AppInfo info : lockedNames) {
-            lockedAppPackNames.add(info.getPackageName());
+    public void removeLockedPackNameItem(SimpleAppInfo value) {
+        List<SimpleAppInfo> vLockedPackNameList = getLockedPackNameList();
+        int containTheItem = isContainTheItem(vLockedPackNameList, value);
+        Log.e("LockService", "containTheItem: " + containTheItem);
+        if (containTheItem >= 0 && containTheItem < vLockedPackNameList.size()) {
+            vLockedPackNameList.remove(containTheItem);
+            saveRestAppInfos(vLockedPackNameList);
         }
-        int containTheItem = isContainTheItem(lockedAppPackNames, value);
-        if (containTheItem >= 0 && containTheItem < lockedNames.size())
-            lockedNames.remove(containTheItem);
+    }
+
+    /**
+     * 重新保存下应用列表
+     *
+     * @param pAppInfoList 应用列表
+     */
+    public void saveRestAppInfos(List<SimpleAppInfo> pAppInfoList) {
+        Gson vGson = new Gson();
+        Editor edit = mPref.edit();
+        edit.putString(SP_KEY_LOCKED_PACKAGE_NAME, vGson.toJson(pAppInfoList));
+        edit.commit();
     }
 
     /**
@@ -304,9 +292,9 @@ public class SpUtil {
      * @param info        应用包名
      * @return 此应用在集合中的位置
      */
-    public int isContainTheItem(List<String> lockedNames, AppInfo info) {
+    public int isContainTheItem(List<SimpleAppInfo> lockedNames, SimpleAppInfo info) {
         for (int i = 0; i < lockedNames.size(); i++) {
-            if (lockedNames.get(i).equals(info.getPackageName())) {
+            if (lockedNames.get(i).getPackageName().equals(info.getPackageName())) {
                 Log.d("SpUtil", "id: " + lockedNames.get(i));
                 return i;
             }
@@ -321,7 +309,7 @@ public class SpUtil {
      * @return
      */
     public boolean isTheAppLocked(long id) {
-        List<AppInfo> lockedPackNames = getLockedPackNames();
+        List<SimpleAppInfo> lockedPackNames = getLockedPackNameList();
         for (int i = 0; i < lockedPackNames.size(); i++) {
             if (lockedPackNames.get(i).getId() == id) {
                 Log.d("SpUtil", "id: " + id);

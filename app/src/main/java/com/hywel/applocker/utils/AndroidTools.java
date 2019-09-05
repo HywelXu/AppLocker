@@ -11,6 +11,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -21,8 +23,14 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.hywel.applocker.model.AppInfo;
+import com.hywel.applocker.model.SimpleAppInfo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class AndroidTools {
 
@@ -30,7 +38,7 @@ public class AndroidTools {
 
     /**
      * 获取版本号
-     * 
+     *
      * @return 当前应用的版本号 android:versionCode="1"
      */
     public static int getVersionCode(Context context) {
@@ -47,7 +55,7 @@ public class AndroidTools {
 
     /**
      * 获取版本名称
-     * 
+     *
      * @return 当前应用的版本名称 android:versionName="1.0.3"
      */
     public static String getVersionName(Context context) {
@@ -64,7 +72,7 @@ public class AndroidTools {
 
     /**
      * 判断应用程序是否处于前台
-     * 
+     *
      * @param context
      * @return
      */
@@ -110,10 +118,10 @@ public class AndroidTools {
 
     /**
      * Get the screen width
-     * 
-     * @author mapeng_thun
+     *
      * @param context
      * @return
+     * @author mapeng_thun
      */
     public static int getScreenWidth(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -124,10 +132,10 @@ public class AndroidTools {
 
     /**
      * Get the screen height
-     * 
-     * @author mapeng_thun
+     *
      * @param context
      * @return
+     * @author mapeng_thun
      */
     public static int getScreenHeight(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -163,7 +171,7 @@ public class AndroidTools {
 
     /**
      * 用户的os的sdk的版本是否大于等于指定的版本
-     * 
+     *
      * @param apiLevel
      * @return
      */
@@ -184,7 +192,7 @@ public class AndroidTools {
 
     /**
      * 通过模拟点击事件,使View获取焦点,进而弹出软键盘
-     * 
+     *
      * @param view
      */
     public static void showKeyboardOtherway(final View view) {
@@ -316,8 +324,6 @@ public class AndroidTools {
 
     /**
      * EditText获取焦点,并弹出软键盘
-     * 
-     * @param 文本编辑框
      */
     public static void requestFocus(Context context, EditText v) {
         v.requestFocus();
@@ -346,10 +352,81 @@ public class AndroidTools {
      * 判断 List 是否可用
      */
     public static <E> boolean isListValidate(List<E> list) {
-        if (list != null & list.size() > 0) {
+        if (null != list && list.size() > 0) {
             return true;
         }
         return false;
+    }
+
+    public static List<SimpleAppInfo> getDifferentElements(List<SimpleAppInfo> list1, List<SimpleAppInfo> list2) {
+        List<SimpleAppInfo> diff = new ArrayList<SimpleAppInfo>();
+        long start = System.currentTimeMillis();
+        Map<SimpleAppInfo, Integer> map = new HashMap<SimpleAppInfo, Integer>(list1.size() + list2.size());
+        List<SimpleAppInfo> maxList = list1;
+        List<SimpleAppInfo> minList = list2;
+        if (list2.size() > list1.size()) {
+            maxList = list2;
+            minList = list1;
+        }
+        for (SimpleAppInfo string : maxList) {
+            map.put(string, 1);
+        }
+        for (SimpleAppInfo string : minList) {
+            Integer count = map.get(string);
+            if (count != null) {
+                map.put(string, ++count);
+                continue;
+            }
+            map.put(string, 1);
+        }
+        for (Map.Entry<SimpleAppInfo, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == 1) {
+                diff.add(entry.getKey());
+            }
+        }
+        System.out.println("方法4 耗时：" + (System.currentTimeMillis() - start) + " 毫秒");
+        return diff;
+
+    }
+
+    /**
+     * 初始化已锁定的应用的状态
+     *
+     * @param pAppInfos 用户/系统应用列表
+     * @param pList     已锁定的应用列表
+     */
+    public static void renderLockedElements(@NonNull List<AppInfo> pAppInfos, @Nullable List<SimpleAppInfo> pList) {
+        if (AndroidTools.isListValidate(pAppInfos)) {
+            if (AndroidTools.isListValidate(pList)) {
+                int vSize = pList.size();
+                for (int vI = 0; vI < vSize; vI++) {
+                    SimpleAppInfo vSimpleAppInfo = pList.get(vI);
+                    for (AppInfo vAppInfo : pAppInfos) {
+                        if (vAppInfo.getPackageName().equals(vSimpleAppInfo.getPackageName())) {
+                            vAppInfo.setLocked(true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 设置某个 APP 的解锁状态
+     *
+     * @param pSimpleAppInfos
+     * @param pPackageName
+     */
+    public static void renderUnlockElementsByPackageName(String pPackageName) {
+        List<SimpleAppInfo> vLockedPackNameList = SpUtil.getInstance().getLockedPackNameList();
+        if (AndroidTools.isListValidate(vLockedPackNameList)) {
+            for (SimpleAppInfo vSimpleAppInfo : vLockedPackNameList) {
+                if (vSimpleAppInfo.getPackageName().equals(pPackageName)) {
+                    vSimpleAppInfo.setUnLock(true);
+                }
+            }
+        }
+        SpUtil.getInstance().saveRestAppInfos(vLockedPackNameList);
     }
 
 }

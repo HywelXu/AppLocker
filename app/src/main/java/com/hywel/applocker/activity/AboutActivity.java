@@ -12,16 +12,14 @@ import com.hywel.applocker.R;
 public class AboutActivity extends BaseActivity {
 
     @Override
-    protected void setRightTitleBar() {
-        mRightImageView.setImageResource(android.R.drawable.ic_menu_share);
-        mRightImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                simpleShare(getText(R.string.setting_panel_all_about_me_share_title).toString(), getText(R.string.setting_panel_all_about_me_share_text).toString());
-            }
-        });
+    protected int setRightTitleBarIcon() {
+        return R.mipmap.icon_share;
     }
 
+    @Override
+    protected void onRightMenuClicked(View view) {
+        simpleShare(getText(R.string.setting_panel_all_about_me_share_title).toString(), getText(R.string.setting_panel_all_about_me_share_text).toString());
+    }
 
     @Override
     protected void makeActions() {
@@ -35,11 +33,10 @@ public class AboutActivity extends BaseActivity {
 
     @Override
     protected void renderView(Bundle savedInstanceState) {
-        injectView();
     }
 
     @Override
-    public int getInjectLayoutId() {
+    public int getLayoutId() {
         return R.layout.activity_about;
     }
 
